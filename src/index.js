@@ -4,4 +4,6 @@ const getData = async () => {
   await Promise.resolve();
 }
 
-getData();
+getData().then(() => {
+  console.log('Resolved')
+})
