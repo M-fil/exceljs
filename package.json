@@ -1,0 +1,23 @@
+{
+  "name": "exceljs",
+  "version": "1.0.0",
+  "description": "Pure ExcelJS App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/M-fil/exceljs.git"
+  },
+  "keywords": [
+    "excel",
+    "js"
+  ],
+  "author": "Maxim Filanovich <maxim_filanovich@mail.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/M-fil/exceljs/issues"
+  },
+  "homepage": "https://github.com/M-fil/exceljs#readme"
+}
