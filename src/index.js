@@ -6,6 +6,8 @@ import Toolbar from './components/toolbar/Toolbar';
 import Formula from './components/formula/Formula';
 import Header from './components/header/Header';
 
-const excel = new Excel('#root', {
-  components: [],
+const excel = new Excel('.root', {
+  components: [Table, Toolbar, Formula, Header],
 });
+
+excel.render();
