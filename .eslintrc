@@ -8,6 +8,8 @@
   "extends": ["eslint:recommended", "google"],
   "rules": {
     "max-len": ["error", { "code": 100 }],
-    "object-curly-spacing": "off"
+    "object-curly-spacing": "off",
+    "require-jsdoc": "off",
+    "linebreak-style": "off"
   }
 }

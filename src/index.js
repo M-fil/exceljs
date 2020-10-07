@@ -1,9 +1,11 @@
 import './scss/index.scss';
 
-const getData = async () => {
-  await Promise.resolve();
-}
+import Excel from './components/excel/Excel';
+import Table from './components/table/Table';
+import Toolbar from './components/toolbar/Toolbar';
+import Formula from './components/formula/Formula';
+import Header from './components/header/Header';
 
-getData().then(() => {
-  console.log('Resolved')
-})
+const excel = new Excel('#root', {
+  components: [],
+});
