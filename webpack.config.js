@@ -87,6 +87,14 @@ module.exports = {
         exclude: /node_modules/,
         use: jsLoaders(),
       },
+      {
+        test: /\.(woff|woff2|ttf|eot)$/,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
     ],
   },
 };

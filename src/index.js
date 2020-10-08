@@ -1,4 +1,5 @@
 import './scss/index.scss';
+import 'material-icons/iconfont/material-icons.scss';
 
 import Excel from './components/excel/Excel';
 import Table from './components/table/Table';

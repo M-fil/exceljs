@@ -32,7 +32,7 @@ class Table extends ExcelComponent {
         } else if (rowIndex === 0) {
           create('div', 'column', character, rowData);
         } else {
-          create('div', 'column', '', rowData);
+          create('div', 'column', '', rowData, ['contenteditable', true]);
         }
       });
 
