@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProduction;
 
-const getFilename = (filename) => isDevelopment ? filename.split('.').join('.[hash].') : filename;
+const getFilename = (filename) => (isDevelopment ? filename.split('.').join('.[hash].') : filename);
 
 const jsLoaders = () => {
   const loaders = [
@@ -19,10 +19,6 @@ const jsLoaders = () => {
       },
     },
   ];
-
-  if (isDevelopment) {
-    loaders.push('eslint-loader');
-  }
 
   return loaders;
 };

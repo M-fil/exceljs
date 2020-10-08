@@ -11,6 +11,9 @@
         "sourceType": "module"
     },
     "rules": {
-        "import/prefer-default-export": "off"
+        "import/prefer-default-export": "off",
+        "linebreak-style": "off",
+        "import/no-named-as-default": "off",
+        "import/no-unresolved": "off"
     }
 }

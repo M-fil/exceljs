@@ -1,7 +1,16 @@
 import ExcelComponent from '@core/ExcelComponent';
 
 class Header extends ExcelComponent {
-  static className = 'excel__header';
+  static getClassName() {
+    return 'excel__header';
+  }
+
+  constructor($root) {
+    super($root, {
+      name: 'Header',
+      listeners: [],
+    });
+  }
 
   toHTML() {
     return `

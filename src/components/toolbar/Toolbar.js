@@ -1,7 +1,16 @@
 import ExcelComponent from '@core/ExcelComponent';
 
 class Toolbar extends ExcelComponent {
-  static className = 'excel__toolbar';
+  static getClassName() {
+    return 'excel__toolbar';
+  }
+
+  constructor($root) {
+    super($root, {
+      name: 'Toolbar',
+      listeners: [],
+    });
+  }
 
   toHTML() {
     return `

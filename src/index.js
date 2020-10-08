@@ -7,7 +7,7 @@ import Formula from './components/formula/Formula';
 import Header from './components/header/Header';
 
 const excel = new Excel('.root', {
-  components: [Table, Toolbar, Formula, Header],
+  components: [Header, Formula, Toolbar, Table],
 });
 
 excel.render();

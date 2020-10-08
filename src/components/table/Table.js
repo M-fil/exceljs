@@ -1,7 +1,16 @@
 import ExcelComponent from '@core/ExcelComponent';
 
 class Table extends ExcelComponent {
-  static className = 'excel__table';
+  static getClassName() {
+    return 'excel__table';
+  }
+
+  constructor($root) {
+    super($root, {
+      name: 'Table',
+      listeners: [],
+    });
+  }
 
   toHTML() {
     return `

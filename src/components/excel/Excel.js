@@ -9,19 +9,24 @@ class Excel {
   getRoot() {
     const root = $.create('div', 'excel');
 
-    this.components.forEach((Component) => {
-      const element = $.create('div', Component.className);
+    this.components = this.components.map((Component) => {
+      const element = $.create('div', Component.getClassName());
       const component = new Component(element);
-      element.innerHTML = component.toHTML();
+      element.html(component.toHTML());
+      root.append(element.$el);
 
-      root.append(element);
+      return component;
     });
 
-    return root;
+    return root.$el;
   }
 
   render() {
     this.$rootContainer.append(this.getRoot());
+    this.components.forEach((component) => {
+      component.init();
+      component.destroyEvents();
+    });
   }
 }
 
