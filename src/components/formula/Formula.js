@@ -1,4 +1,5 @@
 import ExcelComponent from '@core/ExcelComponent';
+import create from '@core/create';
 
 class Formula extends ExcelComponent {
   static getClassName() {
@@ -21,10 +22,8 @@ class Formula extends ExcelComponent {
   }
 
   toHTML() {
-    return `
-      <div class="info">fx</div>
-      <div class="input" contenteditable spellcheck="false"></div>
-    `;
+    create('div', 'info', 'fx', this.$root.$el);
+    create('div', 'input', '', this.$root.$el, ['contenteditable', ''], ['spellcheck', false]);
   }
 }
 export default Formula;

@@ -1,4 +1,9 @@
 import ExcelComponent from '@core/ExcelComponent';
+import create from '@core/create';
+import {
+  getEnglishAlphabetArray,
+  getArrayOfNumber,
+} from '@core/utils';
 
 class Table extends ExcelComponent {
   static getClassName() {
@@ -12,132 +17,27 @@ class Table extends ExcelComponent {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   toHTML() {
-    return `
-    <div class="row">
+    const englishAlphabet = [null, ...getEnglishAlphabetArray()];
+    const rows = [null, ...getArrayOfNumber(20)];
 
-      <div class="row-info"></div>
+    rows.forEach((row, rowIndex) => {
+      const rowContainer = create('div', 'row');
+      const rowData = create('div', 'row-data', '', rowContainer);
 
-      <div class="row-data">
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
-        <div class="column">
-          A
-        </div>
-        <div class="column">
-          B
-        </div>
-        <div class="column">
-          C
-        </div>
+      englishAlphabet.forEach((character, characterIndex) => {
+        if (characterIndex === 0) {
+          create('div', 'column', row ? String(row) : '', rowData);
+        } else if (rowIndex === 0) {
+          create('div', 'column', character, rowData);
+        } else {
+          create('div', 'column', '', rowData);
+        }
+      });
 
-      </div>
-
-    </div>
-    
-    <div class="row">
-      <div class="row-info">
-        1
-      </div>
-
-      <div class="row-data">
-        <div class="cell selected" contenteditable="">A1</div>
-        <div class="cell" contenteditable="">B2</div>
-        <div class="cell" contenteditable="">C3</div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="row-info">
-        2
-      </div>
-
-      <div class="row-data">
-        <div class="cell">A1</div>
-        <div class="cell">B2</div>
-        <div class="cell">C3</div>
-      </div>
-    </div>
-  `;
+      this.$root.append(rowContainer);
+    });
   }
 }
 

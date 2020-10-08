@@ -1,4 +1,5 @@
 import ExcelComponent from '@core/ExcelComponent';
+import create from '../../core/create';
 
 class Toolbar extends ExcelComponent {
   static getClassName() {
@@ -12,32 +13,18 @@ class Toolbar extends ExcelComponent {
     });
   }
 
+  static createButtonElement(iconName) {
+    const icon = create('i', 'material-icons', iconName);
+    return create('div', 'button', icon);
+  }
+
   toHTML() {
-    return `
-      <div class="button">
-        <i class="material-icons">format_align_left</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons">format_align_center</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons">format_align_right</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons">format_bold</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons">format_italic</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons">format_underlined</i>
-      </div>
-    `;
+    this.$root.append(Toolbar.createButtonElement('format_align_left'));
+    this.$root.append(Toolbar.createButtonElement('format_align_center'));
+    this.$root.append(Toolbar.createButtonElement('format_align_right'));
+    this.$root.append(Toolbar.createButtonElement('format_bold'));
+    this.$root.append(Toolbar.createButtonElement('format_italic'));
+    this.$root.append(Toolbar.createButtonElement('format_underlined'));
   }
 }
 

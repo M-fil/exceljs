@@ -3,6 +3,7 @@ class Dom {
     this.$el = typeof selector === 'string'
       ? document.querySelector(selector)
       : selector;
+    this.listeners = {};
   }
 
   html(html) {
@@ -33,7 +34,7 @@ class Dom {
 
   on(eventType, callback) {
     if (eventType && callback) {
-      this[`${eventType}Listener`] = callback;
+      this.listeners[eventType] = callback;
       this.$el.addEventListener(eventType, this[`${eventType}Listener`]);
     } else {
       throw new Error('You need to provide eventType and callback to initialize an event listener!');
@@ -41,13 +42,13 @@ class Dom {
   }
 
   off(eventType) {
-    const eventListenerCallback = this[`${eventType}Listener`];
+    const eventListenerCallback = this.listeners[eventType];
     if (!eventListenerCallback || !eventType) {
       throw new Error(`The listener of type ${eventType} wasn't initialized!`);
     }
 
     this.$el.removeEventListener(eventType, eventListenerCallback);
-    this[`${eventType}Listener`] = null;
+    delete this.listeners[eventType];
   }
 }
 

@@ -1,4 +1,5 @@
 import ExcelComponent from '@core/ExcelComponent';
+import create from '@core/create';
 
 class Header extends ExcelComponent {
   static getClassName() {
@@ -13,21 +14,12 @@ class Header extends ExcelComponent {
   }
 
   toHTML() {
-    return `
-      <input type="text" class="input" value="Новая таблица" />
-
-      <div>
-
-        <div class="button">
-          <i class="material-icons">delete</i>
-        </div>
-
-        <div class="button">
-          <i class="material-icons">exit_to_app</i>
-        </div>
-
-      </div>
-    `;
+    const input = create('input', 'input', '', this.$root.$el, ['type', 'text'], ['value', 'Новая таблица']);
+    const divContainer = document.createElement('div');
+    create('div', 'button', create('i', 'material-icons', 'delete'), divContainer);
+    create('div', 'button', create('i', 'material-icons', 'exit_to_app'), divContainer);
+    this.$root.append(input);
+    this.$root.append(divContainer);
   }
 }
 

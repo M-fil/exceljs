@@ -12,7 +12,7 @@ class Excel {
     this.components = this.components.map((Component) => {
       const element = $.create('div', Component.getClassName());
       const component = new Component(element);
-      element.html(component.toHTML());
+      component.toHTML();
       root.append(element.$el);
 
       return component;
