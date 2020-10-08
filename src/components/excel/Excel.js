@@ -1,3 +1,5 @@
+import { $ } from '@core/dom';
+
 class Excel {
   constructor(selector, options) {
     this.$rootContainer = document.querySelector(selector);
@@ -5,13 +7,11 @@ class Excel {
   }
 
   getRoot() {
-    const root = document.createElement('div');
-    root.classList.add('excel');
+    const root = $.create('div', 'excel');
 
     this.components.forEach((Component) => {
-      const element = document.createElement('div');
+      const element = $.create('div', Component.className);
       const component = new Component(element);
-      element.classList.add(Component.className);
       element.innerHTML = component.toHTML();
 
       root.append(element);
