@@ -2,7 +2,7 @@ import { capitalize } from './utils';
 
 class DomListener {
   static getMethodName(method) {
-    return `on${capitalize(method)}`
+    return `on${capitalize(method)}`;
   }
 
   constructor($root, listeners = []) {

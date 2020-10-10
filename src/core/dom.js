@@ -35,7 +35,7 @@ class Dom {
   on(eventType, callback) {
     if (eventType && callback) {
       this.listeners[eventType] = callback;
-      this.$el.addEventListener(eventType, this[`${eventType}Listener`]);
+      this.$el.addEventListener(eventType, this.listeners[eventType]);
     } else {
       throw new Error('You need to provide eventType and callback to initialize an event listener!');
     }

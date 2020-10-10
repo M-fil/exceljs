@@ -14,8 +14,10 @@ class Table extends ExcelComponent {
     super($root, {
       name: 'Table',
       numberOfRows: 30,
-      listeners: [],
+      listeners: ['mousedown'],
     });
+
+    this.targetResizeElement = null;
   }
 
   create() {
@@ -27,13 +29,13 @@ class Table extends ExcelComponent {
       const rowData = create('div', 'row-data', '', rowContainer);
 
       englishAlphabet.forEach((character, characterIndex) => {
-        const columnResizeElement = create('div', 'col-resize');
-        const rowResize = create('div', 'row-resize');
+        const columnResizeElement = create('div', 'col-resize', '', null, ['resize', 'col', true]);
+        const rowResize = create('div', 'row-resize', '', null, ['resize', 'row', true]);
 
         if (characterIndex === 0) {
-          create('div', 'row-info', [row ? String(row) : '', rowResize], rowData);
+          create('div', 'row-info', [row ? String(row) : '', row && rowResize], rowData);
         } else if (rowIndex === 0) {
-          create('div', 'column', [character, columnResizeElement], rowData);
+          create('div', 'column', [character, columnResizeElement], rowData, ['resizable', '', true]);
         } else {
           create('div', 'cell', '', rowData, ['contenteditable', true]);
         }
@@ -46,6 +48,24 @@ class Table extends ExcelComponent {
   // eslint-disable-next-line class-methods-use-this
   toHTML() {
     this.create();
+  }
+
+  onMousedown(event) {
+    if (event.target.dataset.resize) {
+      this.targetElement = event.target.closest('[data-resize]');
+      const parentResizeElement = this.targetElement.closest('[data-resizable]');
+      const targetElementCoords = parentResizeElement.getBoundingClientRect();
+
+      document.onmousemove = (e) => {
+        const delta = e.pageX - targetElementCoords.right;
+        const newWidth = targetElementCoords.width + delta;
+        parentResizeElement.style.width = `${newWidth}px`;
+      };
+    }
+
+    document.onmouseup = () => {
+      document.onmousemove = null;
+    };
   }
 }
 

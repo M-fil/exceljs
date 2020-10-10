@@ -20,7 +20,7 @@ function create(el, classNames, child, parent, ...dataAttr) {
     parent.appendChild(element);
   }
 
-  if (dataAttr.length) {
+  if (dataAttr && dataAttr.length) {
     dataAttr.forEach(([attrName, attrValue, isDataAttr]) => {
       if (attrValue === '') {
         element.setAttribute(attrName, '');
