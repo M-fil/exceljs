@@ -50,6 +50,47 @@ class Dom {
     this.$el.removeEventListener(eventType, eventListenerCallback);
     delete this.listeners[eventType];
   }
+
+  findAll(selector) {
+    return Array.from(this.$el.querySelectorAll(selector))
+      .map((elem) => $(elem));
+  }
+
+  findOne(selector) {
+    return $(this.$el?.querySelector(selector));
+  }
+
+  getCoords() {
+    return this.$el.getBoundingClientRect();
+  }
+
+  get dataAttr() {
+    return this.$el?.dataset;
+  }
+
+  closest(selector) {
+    return $(this.$el.closest(selector));
+  }
+
+  addClasses(...classes) {
+    this.$el.classList.add(...classes);
+    return this;
+  }
+
+  removeClasses(...classes) {
+    this.$el.classList.remove(...classes);
+    return this;
+  }
+
+  css(styles = {}) {
+    Object.keys(styles).forEach((prop) => {
+      if (prop in styles) {
+        this.$el.style[prop] = styles[prop];
+      }
+    });
+
+    return this;
+  }
 }
 
 function $(selector) {

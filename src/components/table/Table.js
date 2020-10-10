@@ -4,6 +4,7 @@ import {
   getEnglishAlphabetArray,
   getArrayOfNumber,
 } from '@core/utils';
+import { $ } from '@core/dom';
 
 class Table extends ExcelComponent {
   static getClassName() {
@@ -61,55 +62,58 @@ class Table extends ExcelComponent {
     this.create();
   }
 
-  changeColumnSize(documentEvent) {
-    const targetElementCoords = this.parentResizeElement.getBoundingClientRect();
-    const { colName } = this.parentResizeElement.dataset;
+  changeColumnSize(event) {
+    const delta = event.clientX - this.targetElementCoords.right;
+    const newWidth = this.targetElementCoords.width + delta;
+    this.parentResizeElement.css({ width: `${newWidth}px` });
 
-    const delta = documentEvent.pageX - targetElementCoords.right;
-    const newWidth = targetElementCoords.width + delta;
+    if (this.targetDataResize) {
+      this.targetDataResize.addClasses('visible');
+    }
 
-    this.parentResizeElement.style.width = `${newWidth}px`;
-    const allColumnChildren = document
-      .querySelectorAll(`[data-parent-col-name="${colName}"]`);
-    const targetColumnHead = document.querySelector(`[data-col-name="${colName}"]`);
-    targetColumnHead.querySelector('[data-resize]').classList.add('visible');
-
-    Array.from(allColumnChildren).forEach((column) => {
-      column.style.width = `${newWidth}px`;
-      column.classList.add('resizable');
+    this.allColumnChildren.forEach((column) => {
+      column.css({ width: `${newWidth}px` });
+      column.addClasses('resizable');
     });
   }
 
-  changeRowSize(documentEvent) {
-    const targetElementCoords = this.parentResizeElement.getBoundingClientRect();
-    const delta = documentEvent.pageY - targetElementCoords.bottom;
-    const newHeight = targetElementCoords.height + delta;
-    this.parentResizeElement.querySelector('[data-resize]').classList.add('visible');
-    this.parentResizeElement.style.height = `${newHeight}px`;
-    this.parentResizeElement.classList.add('resizable');
+  changeRowSize(event) {
+    const delta = event.clientY - this.targetElementCoords.bottom;
+    const newHeight = this.targetElementCoords.height + delta;
+    this.parentResizeElement.findOne('[data-resize]').addClasses('visible');
+    this.parentResizeElement.css({ height: `${newHeight}px` });
+    this.parentResizeElement.addClasses('resizable');
   }
 
   removeColResizableHighlight() {
-    const { colName } = this.parentResizeElement?.dataset;
-    const allColumnChildren = document
-      .querySelectorAll(`[data-parent-col-name="${colName}"]`);
-    const targetColumnHead = document.querySelector(`[data-col-name="${colName}"]`);
-    targetColumnHead?.querySelector('[data-resize]').classList.remove('visible');
+    if (this.targetDataResize) {
+      this.targetDataResize.removeClasses('visible');
+    }
 
-    Array.from(allColumnChildren).forEach((column) => {
-      column.classList.remove('resizable');
-      this.parentResizeElement.classList.remove('visible');
+    this.allColumnChildren.forEach((column) => {
+      column.removeClasses('resizable');
+      this.parentResizeElement.removeClasses('visible');
     });
   }
 
   onMousedown(event) {
-    if (event.target.dataset.resize) {
-      this.targetElement = event.target.closest('[data-resize]');
-      const resizeType = this.targetElement.dataset.resize;
-      this.parentResizeElement = this.targetElement.closest('[data-resizable]');
+    const resizer = $(event.target);
+    if (resizer && resizer.dataAttr.resize) {
+      const targetElement = resizer.closest('[data-resize]');
+      this.resizeType = targetElement.dataAttr.resize;
+      this.parentResizeElement = targetElement.closest('[data-resizable]');
+      this.colName = this.parentResizeElement.dataAttr.colName;
+      this.targetElementCoords = this.parentResizeElement.getCoords();
+
+      this.allColumnChildren = this.$root
+        .findAll(`[data-parent-col-name="${this.colName}"]`);
+      this.targetColumnHead = this.$root
+        .findOne(`[data-col-name="${this.colName}"]`);
+      this.targetDataResize = this.targetColumnHead
+        .findOne('[data-resize]');
 
       document.onmousemove = (e) => {
-        if (resizeType === 'col') {
+        if (this.resizeType === 'col') {
           this.changeColumnSize(e);
         } else {
           this.changeRowSize(e);
@@ -119,9 +123,15 @@ class Table extends ExcelComponent {
 
     document.onmouseup = () => {
       document.onmousemove = null;
-      this.removeColResizableHighlight();
-      this.parentResizeElement.classList.remove('resizable');
-      this.parentResizeElement.querySelector('[data-resize]').classList.remove('visible');
+
+      if (this.parentResizeElement) {
+        if (this.resizeType === 'col') {
+          this.removeColResizableHighlight();
+        } else {
+          this.parentResizeElement.removeClasses('resizable');
+          this.parentResizeElement.findOne('[data-resize]').removeClasses('visible');
+        }
+      }
     };
   }
 }
