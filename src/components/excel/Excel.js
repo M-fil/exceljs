@@ -26,7 +26,6 @@ class Excel {
     this.components.forEach((component) => {
       component.init();
     });
-    console.log(this.components);
   }
 }
 

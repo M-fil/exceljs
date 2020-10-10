@@ -18,6 +18,7 @@ class Table extends ExcelComponent {
     });
 
     this.targetResizeElement = null;
+    this.onMousedown = this.onMousedown.bind(this);
   }
 
   create() {
@@ -25,7 +26,7 @@ class Table extends ExcelComponent {
     const rows = [null, ...getArrayOfNumber(this.options.numberOfRows)];
 
     rows.forEach((row, rowIndex) => {
-      const rowContainer = create('div', 'row');
+      const rowContainer = create('div', 'row', '', null, row ? ['resizable', '', true] : []);
       const rowData = create('div', 'row-data', '', rowContainer);
 
       englishAlphabet.forEach((character, characterIndex) => {
@@ -33,11 +34,22 @@ class Table extends ExcelComponent {
         const rowResize = create('div', 'row-resize', '', null, ['resize', 'row', true]);
 
         if (characterIndex === 0) {
-          create('div', 'row-info', [row ? String(row) : '', row && rowResize], rowData);
+          create(
+            'div', 'row-info',
+            [row ? String(row) : '', row && rowResize], rowData,
+          );
         } else if (rowIndex === 0) {
-          create('div', 'column', [character, columnResizeElement], rowData, ['resizable', '', true]);
+          create(
+            'div', 'column',
+            [character, columnResizeElement], rowData,
+            ['resizable', '', true], ['colName', character, true],
+          );
         } else {
-          create('div', 'cell', '', rowData, ['contenteditable', true]);
+          create(
+            'div', 'cell',
+            '', rowData,
+            ['contenteditable', true], ['parentColName', character, true],
+          );
         }
       });
 
@@ -45,21 +57,44 @@ class Table extends ExcelComponent {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   toHTML() {
     this.create();
+  }
+
+  changeColumnSize(documentEvent) {
+    const targetElementCoords = this.parentResizeElement.getBoundingClientRect();
+    const { colName } = this.parentResizeElement.dataset;
+
+    const delta = documentEvent.pageX - targetElementCoords.right;
+    const newWidth = targetElementCoords.width + delta;
+
+    this.parentResizeElement.style.width = `${newWidth}px`;
+    const allColumnChildren = document
+      .querySelectorAll(`[data-parent-col-name="${colName}"]`);
+    Array.from(allColumnChildren).forEach((column) => {
+      column.style.width = `${newWidth}px`;
+    });
+  }
+
+  changeRowSize(documentEvent) {
+    const targetElementCoords = this.parentResizeElement.getBoundingClientRect();
+    const delta = documentEvent.pageY - targetElementCoords.bottom;
+    const newHeight = targetElementCoords.height + delta;
+    this.parentResizeElement.style.height = `${newHeight}px`;
   }
 
   onMousedown(event) {
     if (event.target.dataset.resize) {
       this.targetElement = event.target.closest('[data-resize]');
-      const parentResizeElement = this.targetElement.closest('[data-resizable]');
-      const targetElementCoords = parentResizeElement.getBoundingClientRect();
+      const resizeType = this.targetElement.dataset.resize;
+      this.parentResizeElement = this.targetElement.closest('[data-resizable]');
 
       document.onmousemove = (e) => {
-        const delta = e.pageX - targetElementCoords.right;
-        const newWidth = targetElementCoords.width + delta;
-        parentResizeElement.style.width = `${newWidth}px`;
+        if (resizeType === 'col') {
+          this.changeColumnSize(e);
+        } else {
+          this.changeRowSize(e);
+        }
       };
     }
 

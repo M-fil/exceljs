@@ -21,16 +21,15 @@ function create(el, classNames, child, parent, ...dataAttr) {
   }
 
   if (dataAttr && dataAttr.length) {
-    dataAttr.forEach(([attrName, attrValue, isDataAttr]) => {
-      if (attrValue === '') {
-        element.setAttribute(attrName, '');
-      }
-      if (!isDataAttr) {
-        element.setAttribute(attrName, attrValue);
-      } else {
-        element.dataset[attrName] = attrValue;
-      }
-    });
+    dataAttr
+      .filter((item) => item && item.length)
+      .forEach(([attrName, attrValue, isDataAttr]) => {
+        if (!isDataAttr) {
+          element.setAttribute(attrName, attrValue);
+        } else {
+          element.dataset[attrName] = attrValue;
+        }
+      });
   }
   return element;
 }
