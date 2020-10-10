@@ -71,8 +71,12 @@ class Table extends ExcelComponent {
     this.parentResizeElement.style.width = `${newWidth}px`;
     const allColumnChildren = document
       .querySelectorAll(`[data-parent-col-name="${colName}"]`);
+    const targetColumnHead = document.querySelector(`[data-col-name="${colName}"]`);
+    targetColumnHead.querySelector('[data-resize]').classList.add('visible');
+
     Array.from(allColumnChildren).forEach((column) => {
       column.style.width = `${newWidth}px`;
+      column.classList.add('resizable');
     });
   }
 
@@ -80,7 +84,22 @@ class Table extends ExcelComponent {
     const targetElementCoords = this.parentResizeElement.getBoundingClientRect();
     const delta = documentEvent.pageY - targetElementCoords.bottom;
     const newHeight = targetElementCoords.height + delta;
+    this.parentResizeElement.querySelector('[data-resize]').classList.add('visible');
     this.parentResizeElement.style.height = `${newHeight}px`;
+    this.parentResizeElement.classList.add('resizable');
+  }
+
+  removeColResizableHighlight() {
+    const { colName } = this.parentResizeElement?.dataset;
+    const allColumnChildren = document
+      .querySelectorAll(`[data-parent-col-name="${colName}"]`);
+    const targetColumnHead = document.querySelector(`[data-col-name="${colName}"]`);
+    targetColumnHead?.querySelector('[data-resize]').classList.remove('visible');
+
+    Array.from(allColumnChildren).forEach((column) => {
+      column.classList.remove('resizable');
+      this.parentResizeElement.classList.remove('visible');
+    });
   }
 
   onMousedown(event) {
@@ -100,6 +119,9 @@ class Table extends ExcelComponent {
 
     document.onmouseup = () => {
       document.onmousemove = null;
+      this.removeColResizableHighlight();
+      this.parentResizeElement.classList.remove('resizable');
+      this.parentResizeElement.querySelector('[data-resize]').classList.remove('visible');
     };
   }
 }

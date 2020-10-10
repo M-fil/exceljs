@@ -14,6 +14,10 @@
     flex-direction: row;
     min-height: 20px;
     height: $row-height;
+
+    &.resizable {
+      border-bottom: 2px solid $col-resize-color;
+    }
   }
 
   .row-info {
@@ -64,6 +68,10 @@
       outline: 2px solid #3c74ff;
       z-index: 2;
     }
+
+    &.resizable {
+      border-right: 2px solid $col-resize-color;
+    }
   }
 
   .col-resize, .row-resize {
@@ -81,6 +89,10 @@
     &:hover {
       opacity: 1;
       cursor: col-resize;
+    }
+
+    &.visible {
+      opacity: 1;
     }
   }
 
