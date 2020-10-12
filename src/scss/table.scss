@@ -10,6 +10,7 @@
   padding-bottom: 2px;
 
   .row {
+    position: relative;
     display: flex;
     flex-direction: row;
     min-height: 20px;
@@ -51,6 +52,7 @@
   }
 
   .cell {
+    position: relative;
     min-width: 40px;
     padding: 5px;
     width: $cell-width;
@@ -76,14 +78,11 @@
 
   .col-resize, .row-resize {
     position: absolute;
-    right: -3px;
-    bottom: 0;
     background: $col-resize-color;
     width: 6px;
     height: 100%;
 
     opacity: 0;
-    transition: 0.2s ease cursor, opacity;
     z-index: 100;
 
     &:hover {
@@ -92,7 +91,20 @@
     }
 
     &.visible {
-      opacity: 1;
+      opacity: 1 !important;
+
+      &:hover {
+        opacity: 0;
+      }
+
+      &::after {
+        content: '';
+
+        display: block;
+        position: absolute;
+
+        background: $col-resize-color;
+      }
     }
   }
 
@@ -106,6 +118,27 @@
 
     &:hover {
       cursor: row-resize;
+    }
+
+    &::after {
+      bottom: -1.5px;
+      left: 0;
+
+      width: 40px;
+      height: 6px;
+    }
+  }
+
+  .col-resize {
+    right: -3px;
+    bottom: 0;
+
+    &.visible::after {
+      top: -23px;
+      right: -1.5px;
+
+      width: 6px;
+      height: 23px;
     }
   }
 }

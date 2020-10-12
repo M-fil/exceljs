@@ -91,6 +91,14 @@ class Dom {
 
     return this;
   }
+
+  get offsetHeight() {
+    return this.$el.offsetHeight;
+  }
+
+  get offsetWidth() {
+    return this.$el.offsetWidth;
+  }
 }
 
 function $(selector) {
