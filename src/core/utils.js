@@ -17,5 +17,12 @@ export const getEnglishAlphabetArray = () => {
   return String.fromCharCode(...codes).split('');
 };
 
+export const getEnglishAlphabetLength = () => {
+  const ACode = ('A').charCodeAt();
+  const ZCode = ('Z').charCodeAt();
+
+  return ZCode - ACode + 1;
+};
+
 export const getArrayOfNumber = (arrayLength) => Array
   .from({ length: arrayLength }).map((_, index) => index + 1);
