@@ -1,5 +1,6 @@
 import { $ } from '@core/dom';
 import { getEnglishAlphabetLength } from '@core/utils';
+import { shouldResize } from '../../helpers/helpers';
 
 class TableResize {
   constructor($root, numberOfRows) {
@@ -89,7 +90,7 @@ class TableResize {
 
   activateOnMousedownHandler(event) {
     const resizer = $(event.target);
-    if (resizer && resizer.dataAttr.resize) {
+    if (shouldResize(resizer)) {
       const targetElement = resizer.closest('[data-resize]');
       this.resizeType = targetElement.dataAttr.resize;
       this.parentResizeElement = targetElement.closest('[data-resizable]');
