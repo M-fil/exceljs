@@ -67,7 +67,7 @@
 
     &.selected {
       border: none;
-      outline: 2px solid #3c74ff;
+      box-shadow: inset 0 0 0 2px blue;
       z-index: 2;
     }
 
