@@ -4,6 +4,8 @@ import {
   getEnglishAlphabetArray,
   getArrayOfNumber,
 } from '@core/utils';
+import { $ } from '@core/dom';
+import { shouldResize } from './helpers/helpers';
 
 import TableResize from './components/TableResize/TableResize';
 import TableSelection from './components/TableSelection/TableSelection';
@@ -68,7 +70,7 @@ class Table extends ExcelComponent {
             'div', 'cell',
             '', rowData,
             ['contenteditable', true], ['parentColName', character, true],
-            ['selectCell', '', true],
+            ['selectCell', '', true], ['cellIndex', characterIndex],
           );
         }
       });
@@ -82,13 +84,36 @@ class Table extends ExcelComponent {
   }
 
   onMousedown(event) {
-    this.tableResize.activateOnMousedownHandler(event);
+    const resizer = $(event.target);
+
+    const selector = $(event.target);
+    const targetSelector = selector.closest('[data-select-cell]');
+    if (targetSelector) {
+      this.tableSelection.removeSelectionGroup();
+      this.tableSelection.select(targetSelector);
+
+      document.onmousemove = (e) => {
+        const currentSelector = $(e.target).closest('[data-select-cell]');
+        if (currentSelector && !currentSelector.isHTMLLinkEquals(targetSelector)) {
+          this.tableSelection.selectGroup(currentSelector);
+        }
+      };
+
+      document.onmouseup = () => {
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
+    }
+    if (shouldResize(resizer)) {
+      this.tableResize.activateOnMousedownHandler(resizer);
+    }
   }
 
   onClick(event) {
-    const target = event.target.closest('[data-select-cell]');
-    if (target) {
-      console.log(this.tableSelection)
+    const target = $(event.target).closest('[data-select-cell]');
+    const { currentSelectedElement } = this.tableSelection.state;
+
+    if (target && target.isHTMLLinkEquals(currentSelectedElement)) {
       this.tableSelection.select(target);
     }
   }

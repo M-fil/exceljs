@@ -1,4 +1,4 @@
-class Dom {
+export class Dom {
   constructor(selector) {
     this.$el = typeof selector === 'string'
       ? document.querySelector(selector)
@@ -72,14 +72,30 @@ class Dom {
     return $(this.$el.closest(selector));
   }
 
+  hasClass(className) {
+    return this.$el?.classList.contains(className);
+  }
+
   addClasses(...classes) {
-    this.$el.classList.add(...classes);
-    return this;
+    if (this.$el) {
+      this.$el.classList.add(...classes);
+      return this;
+    }
+
+    return null;
   }
 
   removeClasses(...classes) {
-    this.$el.classList.remove(...classes);
-    return this;
+    if (this.$el) {
+      this.$el.classList.remove(...classes);
+      return this;
+    }
+
+    return null;
+  }
+
+  isHTMLLinkEquals(htmlElement) {
+    return this.$el === htmlElement || this.$el === htmlElement?.$el;
   }
 
   css(styles = {}) {

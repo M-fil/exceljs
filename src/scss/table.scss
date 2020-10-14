@@ -67,8 +67,12 @@
 
     &.selected {
       border: none;
-      box-shadow: inset 0 0 0 2px blue;
+      box-shadow: inset 0 0 0 2px $col-resize-color;
       z-index: 2;
+    }
+
+    &.group-selected {
+      box-shadow: inset 0 0 0 0.5px $col-resize-color;
     }
 
     &.resizable {
