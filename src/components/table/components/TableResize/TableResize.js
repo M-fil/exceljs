@@ -1,8 +1,10 @@
-import { $ } from '@core/dom';
 import { getEnglishAlphabetLength } from '@core/utils';
-import { shouldResize } from '../../helpers/helpers';
 
 class TableResize {
+  static shouldResize(resizer) {
+    return resizer && resizer.dataAttr.resize;
+  }
+
   constructor($root, numberOfRows) {
     this.$root = $root;
     this.numberOfRows = numberOfRows;

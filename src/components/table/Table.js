@@ -5,7 +5,6 @@ import {
   getArrayOfNumber,
 } from '@core/utils';
 import { $ } from '@core/dom';
-import { shouldResize } from './helpers/helpers';
 
 import TableResize from './components/TableResize/TableResize';
 import TableSelection from './components/TableSelection/TableSelection';
@@ -92,19 +91,12 @@ class Table extends ExcelComponent {
 
   onMousedown(event) {
     const resizer = $(event.target);
-
     const selector = $(event.target);
-    const targetSelector = selector.closest('[data-select-cell]');
-    if (targetSelector) {
-      this.tableSelection.removeSelectionGroup();
-      if (event.shiftKey) {
-        this.tableSelection.selectGroup(targetSelector);
-      } else {
-        this.tableSelection.select(targetSelector);
-      }
-    }
 
-    if (shouldResize(resizer)) {
+    if (TableSelection.shouldSelect(selector)) {
+      this.tableSelection.selectCells(event, selector);
+    }
+    if (TableResize.shouldResize(resizer)) {
       this.tableResize.activateOnMousedownHandler(resizer);
     }
   }

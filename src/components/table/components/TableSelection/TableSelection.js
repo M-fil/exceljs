@@ -4,6 +4,10 @@ import {
 } from '@core/utils';
 
 class TableSelection {
+  static shouldSelect(selector) {
+    return selector.closest('[data-select-cell]');
+  }
+
   static getSelectedSelector(type) {
     switch (type) {
       case 'one':
@@ -31,6 +35,16 @@ class TableSelection {
       currentSelectedElement: null,
       selectedElements: [],
     };
+  }
+
+  selectCells(event, selector) {
+    const targetSelector = selector.closest('[data-select-cell]');
+    this.removeSelectionGroup();
+    if (event.shiftKey) {
+      this.selectGroup(targetSelector);
+    } else {
+      this.select(targetSelector);
+    }
   }
 
   selectInitialCell() {
