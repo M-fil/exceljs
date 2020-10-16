@@ -79,6 +79,7 @@ class TableKeyboardControl {
     const { currentSelectedElement } = this.tableSelection.state;
 
     if (currentSelectedElement) {
+      this.tableSelection.removeSelectionGroup();
       this.selectElementByArrowKeyName(keyName);
     }
   }

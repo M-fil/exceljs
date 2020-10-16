@@ -6,10 +6,11 @@ class Formula extends ExcelComponent {
     return 'excel__formula';
   }
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
       name: 'Formula',
       listeners: ['click', 'input'],
+      ...options,
     });
   }
 

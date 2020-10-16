@@ -15,11 +15,12 @@ class Table extends ExcelComponent {
     return 'excel__table';
   }
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
       name: 'Table',
       numberOfRows: 20,
       listeners: ['mousedown', 'keydown'],
+      ...options,
     });
 
     this.targetResizeElement = null;

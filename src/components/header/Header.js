@@ -6,10 +6,11 @@ class Header extends ExcelComponent {
     return 'excel__header';
   }
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
       name: 'Header',
       listeners: [],
+      ...options,
     });
   }
 

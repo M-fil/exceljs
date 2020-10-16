@@ -1,9 +1,11 @@
 import { $ } from '@core/dom';
+import Emitter from '@core/Emitter';
 
 class Excel {
   constructor(selector, options) {
     this.$rootContainer = document.querySelector(selector);
     this.components = options.components || [];
+    this.emitter = new Emitter();
   }
 
   getRoot() {
@@ -11,7 +13,9 @@ class Excel {
 
     this.components = this.components.map((Component) => {
       const element = $.create('div', Component.getClassName());
-      const component = new Component(element);
+      const component = new Component(element, {
+        emitter: this.emitter,
+      });
       component.toHTML();
       root.append(element.$el);
 
