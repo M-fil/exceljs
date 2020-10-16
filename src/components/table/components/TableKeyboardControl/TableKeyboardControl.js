@@ -9,8 +9,9 @@ class TableKeyboardControl {
     return ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Tab', 'Enter'];
   }
 
-  static isAllowToPressKey(key) {
-    return TableKeyboardControl.getPermittedKeyboardKeys().includes(key);
+  static isAllowToPressKey(event) {
+    const keys = TableKeyboardControl.getPermittedKeyboardKeys();
+    return keys.includes(event.key) && !event.shiftKey;
   }
 
   constructor(tableSelection) {
@@ -39,39 +40,35 @@ class TableKeyboardControl {
     let newRowPosition = Number(targetId.row);
 
     switch (arrowKeyName) {
-      case 'ArrowLeft':
-      default: {
+      case 'ArrowLeft': {
         newColPosition = Math.max(newColPosition - 1, 1);
         const newColName = getSymbolByPositionInAlphabet(newColPosition);
-        this.tableSelection.state.currentSelectedElement = this.$root
-          .findOne(`[data-cell-id="${newColName}:${targetId.row}"]`);
-        this.tableSelection.select(this.tableSelection.state.currentSelectedElement);
+        this.tableSelection.selectByCoords(newColName, targetId.row);
         break;
       }
-      case 'ArrowRight': {
+      case 'ArrowRight':
+      case 'Tab': {
         newColPosition = Math.min(newColPosition + 1, this.englishAlphabetLength);
         const newColName = getSymbolByPositionInAlphabet(newColPosition);
-        this.tableSelection.state.currentSelectedElement = this.$root
-          .findOne(`[data-cell-id="${newColName}:${targetId.row}"]`);
-        this.tableSelection.select(this.tableSelection.state.currentSelectedElement);
+        this.tableSelection.selectByCoords(newColName, targetId.row);
         break;
       }
-      case 'ArrowDown': {
+      case 'ArrowDown':
+      case 'Enter': {
         newRowPosition = Math.min(newRowPosition + 1, this.numberOfRows);
-        this.tableSelection.state.currentSelectedElement = this.$root
-          .findOne(`[data-cell-id="${targetId.col}:${newRowPosition}"]`);
-        this.tableSelection.select(this.tableSelection.state.currentSelectedElement);
+        this.tableSelection.selectByCoords(targetId.col, newRowPosition);
         break;
       }
       case 'ArrowUp': {
         newRowPosition = Math.max(newRowPosition - 1, 1);
-        this.tableSelection.state.currentSelectedElement = this.$root
-          .findOne(`[data-cell-id="${targetId.col}:${newRowPosition}"]`);
-        this.tableSelection.select(this.tableSelection.state.currentSelectedElement);
+        this.tableSelection.selectByCoords(targetId.col, newRowPosition);
         break;
       }
+      default:
+        return null;
     }
-    this.tableSelection.state.currentSelectedElement.focus();
+
+    return null;
   }
 
   moveSelectionByArrowClick(keyName) {

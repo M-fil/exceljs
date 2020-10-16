@@ -107,7 +107,9 @@ class Table extends ExcelComponent {
 
   onKeydown(event) {
     const { key } = event;
-    if (TableKeyboardControl.isAllowToPressKey(key)) {
+    if (TableKeyboardControl.isAllowToPressKey(event)) {
+      event.preventDefault();
+
       const { currentSelectedElement } = this.tableSelection.state;
       this.keyboardControl.moveSelectionByArrowClick(key, currentSelectedElement);
     }

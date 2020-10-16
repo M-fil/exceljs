@@ -66,6 +66,13 @@ class TableSelection {
     }
   }
 
+  selectByCoords(col, row) {
+    const newSelectedElement = this.$root.findOne(`[data-cell-id="${col}:${row}"]`);
+    if (newSelectedElement) {
+      this.select(newSelectedElement);
+    }
+  }
+
   select(targetElement) {
     if (this.state.currentSelectedElement) {
       this.removeSingleSelection();
@@ -78,6 +85,7 @@ class TableSelection {
       if (currentSelectedElement) {
         currentSelectedElement
           .addClasses(TableSelection.getSelectedSelector('one'));
+        currentSelectedElement.focus();
       }
     }
   }
