@@ -1,45 +1,103 @@
+import {
+  getSymbolPositionInAlphabet,
+  getSymbolByPositionInAlphabet,
+} from '@core/utils';
+
 class TableSelection {
-  constructor() {
+  static getSelectedSelector(type) {
+    switch (type) {
+      case 'one':
+      default:
+        return 'selected';
+      case 'group':
+        return 'group-selected';
+      case 'initial-cell':
+        return '[data-cell-id="A:1"]';
+    }
+  }
+
+  static createRange(start, end) {
+    if (start > end) {
+      [end, start] = [start, end];
+    }
+    const length = end - start + 1;
+    return Array.from({ length })
+      .map((_, index) => start + index);
+  }
+
+  constructor($root) {
+    this.$root = $root;
     this.state = {
       currentSelectedElement: null,
       selectedElements: [],
     };
   }
 
-  select(targetElement, withClassRemove = true) {
-    if (this.state.currentSelectedElement && withClassRemove) {
-      this.state.currentSelectedElement.removeClasses('selected');
+  selectInitialCell() {
+    this.state.currentSelectedElement = this.$root.findOne(
+      TableSelection.getSelectedSelector('initial-cell'),
+    );
+    const { currentSelectedElement } = this.state;
+    if (currentSelectedElement) {
+      currentSelectedElement.addClasses('selected');
+    }
+  }
+
+  select(targetElement) {
+    if (this.state.currentSelectedElement) {
+      this.removeSingleSelection();
     }
 
     if (targetElement) {
       this.state.currentSelectedElement = targetElement;
       const { currentSelectedElement } = this.state;
+
       if (currentSelectedElement) {
-        currentSelectedElement.addClasses('selected');
+        currentSelectedElement
+          .addClasses(TableSelection.getSelectedSelector('one'));
       }
     }
   }
 
   selectGroup(targetElement) {
-    const isAlreadySelected = this.state.selectedElements
-      ?.some((element) => element.isHTMLLinkEquals(targetElement));
+    const startElementId = this.state.currentSelectedElement.getId(true);
+    const targetElementId = targetElement.getId(true);
 
-    if (!isAlreadySelected && this.state.selectedElements) {
-      this.state.selectedElements.push(targetElement);
-      this.state.selectedElements
-        .slice(1)
-        .filter((element) => element && !element.hasClass('group-selected'))
-        .forEach((element) => {
-          element.addClasses('group-selected');
-        });
-    }
+    const rows = TableSelection.createRange(
+      Number(startElementId.row),
+      Number(targetElementId.row),
+    );
+    const cols = TableSelection.createRange(
+      getSymbolPositionInAlphabet(startElementId.col),
+      getSymbolPositionInAlphabet(targetElementId.col),
+    );
+
+    const startElementShortId = this.state.currentSelectedElement.getId();
+    const ids = rows.reduce((acc, curRow) => {
+      cols.forEach((col) => acc.push(`${getSymbolByPositionInAlphabet(col)}:${curRow}`));
+      return acc;
+    }, []);
+    this.state.selectedElements = ids.map((id) => this.$root.findOne(`[data-cell-id="${id}"]`));
+    this.state.selectedElements.forEach((element) => {
+      if (element.dataAttr.cellId !== startElementShortId) {
+        element.addClasses(TableSelection.getSelectedSelector('group'));
+      }
+    });
   }
 
   removeSelectionGroup() {
-    this.state.selectedElements.forEach((element) => {
-      element.removeClasses('group-selected');
-    });
-    this.state.selectedElements = [];
+    const { selectedElements } = this.state;
+    if (selectedElements.length) {
+      const groupSelectionClassName = TableSelection.getSelectedSelector('group');
+      selectedElements.forEach((element) => {
+        element.removeClasses(groupSelectionClassName);
+      });
+    }
+  }
+
+  removeSingleSelection() {
+    const selectedClassName = TableSelection.getSelectedSelector('one');
+    this.state.currentSelectedElement.removeClasses(selectedClassName);
   }
 }
 

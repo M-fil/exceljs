@@ -19,15 +19,19 @@ class Table extends ExcelComponent {
     super($root, {
       name: 'Table',
       numberOfRows: 20,
-      listeners: ['mousedown', 'click'],
+      listeners: ['mousedown'],
     });
 
     this.targetResizeElement = null;
     this.onMousedown = this.onMousedown.bind(this);
-    this.onClick = this.onClick.bind(this);
 
     this.tableResize = new TableResize(this.$root, this.options.numberOfRows);
-    this.tableSelection = new TableSelection();
+    this.tableSelection = new TableSelection(this.$root);
+  }
+
+  init() {
+    super.init();
+    this.tableSelection.selectInitialCell();
   }
 
   create() {
@@ -39,6 +43,7 @@ class Table extends ExcelComponent {
         'div', 'row',
         '', null,
         row ? ['resizable', '', true] : [],
+        ['row', '', true], ['rowIndex', rowIndex, true],
       );
       const rowData = create('div', 'row-data', '', rowContainer);
 
@@ -70,7 +75,9 @@ class Table extends ExcelComponent {
             'div', 'cell',
             '', rowData,
             ['contenteditable', true], ['parentColName', character, true],
-            ['selectCell', '', true], ['cellIndex', characterIndex],
+            ['selectCell', '', true], ['cellIndex', characterIndex, true],
+            ['cellId', `${character}:${rowIndex}`, true],
+            ['parentRowIndex', rowIndex, true],
           );
         }
       });
@@ -90,31 +97,15 @@ class Table extends ExcelComponent {
     const targetSelector = selector.closest('[data-select-cell]');
     if (targetSelector) {
       this.tableSelection.removeSelectionGroup();
-      this.tableSelection.select(targetSelector);
-
-      document.onmousemove = (e) => {
-        const currentSelector = $(e.target).closest('[data-select-cell]');
-        if (currentSelector && !currentSelector.isHTMLLinkEquals(targetSelector)) {
-          this.tableSelection.selectGroup(currentSelector);
-        }
-      };
-
-      document.onmouseup = () => {
-        document.onmousemove = null;
-        document.onmouseup = null;
-      };
+      if (event.shiftKey) {
+        this.tableSelection.selectGroup(targetSelector);
+      } else {
+        this.tableSelection.select(targetSelector);
+      }
     }
+
     if (shouldResize(resizer)) {
       this.tableResize.activateOnMousedownHandler(resizer);
-    }
-  }
-
-  onClick(event) {
-    const target = $(event.target).closest('[data-select-cell]');
-    const { currentSelectedElement } = this.tableSelection.state;
-
-    if (target && target.isHTMLLinkEquals(currentSelectedElement)) {
-      this.tableSelection.select(target);
     }
   }
 }

@@ -52,8 +52,8 @@ export class Dom {
   }
 
   findAll(selector) {
-    return Array.from(this.$el.querySelectorAll(selector))
-      .map((elem) => $(elem));
+    const elements = this.$el && Array.from(this.$el.querySelectorAll(selector));
+    return elements.length && elements.map((elem) => $(elem));
   }
 
   findOne(selector) {
@@ -106,6 +106,18 @@ export class Dom {
     });
 
     return this;
+  }
+
+  getId(parse, idName = 'cellId') {
+    if (parse) {
+      const id = this.getId().split(':');
+      const col = id[0];
+      const row = id[1];
+
+      return { col, row };
+    }
+
+    return this.$el.dataset[idName];
   }
 
   get offsetHeight() {

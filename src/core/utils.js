@@ -26,3 +26,10 @@ export const getEnglishAlphabetLength = () => {
 
 export const getArrayOfNumber = (arrayLength) => Array
   .from({ length: arrayLength }).map((_, index) => index + 1);
+
+const englishAlphabetArray = getEnglishAlphabetArray();
+
+export const getSymbolPositionInAlphabet = (symbol) => englishAlphabetArray
+  .findIndex((letter) => letter === symbol) + 1;
+
+export const getSymbolByPositionInAlphabet = (position) => englishAlphabetArray[position - 1];
