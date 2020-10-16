@@ -8,6 +8,7 @@ import { $ } from '@core/dom';
 
 import TableResize from './components/TableResize/TableResize';
 import TableSelection from './components/TableSelection/TableSelection';
+import TableKeyboardControl from './components/TableKeyboardControl/TableKeyboardControl';
 
 class Table extends ExcelComponent {
   static getClassName() {
@@ -18,14 +19,17 @@ class Table extends ExcelComponent {
     super($root, {
       name: 'Table',
       numberOfRows: 20,
-      listeners: ['mousedown'],
+      listeners: ['mousedown', 'keydown'],
     });
 
     this.targetResizeElement = null;
     this.onMousedown = this.onMousedown.bind(this);
+    this.onKeydown = this.onKeydown.bind(this);
 
     this.tableResize = new TableResize(this.$root, this.options.numberOfRows);
-    this.tableSelection = new TableSelection(this.$root);
+    this.tableSelection = new TableSelection(this.$root, this.keyboardControl);
+    this.keyboardControl = new TableKeyboardControl(this.tableSelection)
+      .setNumberOfRows(this.options.numberOfRows);
   }
 
   init() {
@@ -98,6 +102,14 @@ class Table extends ExcelComponent {
     }
     if (TableResize.shouldResize(resizer)) {
       this.tableResize.activateOnMousedownHandler(resizer);
+    }
+  }
+
+  onKeydown(event) {
+    const { key } = event;
+    if (TableKeyboardControl.isAllowToPressKey(key)) {
+      const { currentSelectedElement } = this.tableSelection.state;
+      this.keyboardControl.moveSelectionByArrowClick(key, currentSelectedElement);
     }
   }
 }

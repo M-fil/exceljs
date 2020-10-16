@@ -1,6 +1,7 @@
 import {
   getSymbolPositionInAlphabet,
   getSymbolByPositionInAlphabet,
+  getEnglishAlphabetLength,
 } from '@core/utils';
 
 class TableSelection {
@@ -29,12 +30,19 @@ class TableSelection {
       .map((_, index) => start + index);
   }
 
+  static getPermittedKeyboardKeys() {
+    return ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', 'Tab', 'Enter'];
+  }
+
   constructor($root) {
     this.$root = $root;
     this.state = {
       currentSelectedElement: null,
       selectedElements: [],
     };
+
+    this.permittedKeys = TableSelection.getPermittedKeyboardKeys();
+    this.englishAlphabetLength = getEnglishAlphabetLength();
   }
 
   selectCells(event, selector) {
@@ -53,6 +61,7 @@ class TableSelection {
     );
     const { currentSelectedElement } = this.state;
     if (currentSelectedElement) {
+      currentSelectedElement.focus();
       currentSelectedElement.addClasses('selected');
     }
   }

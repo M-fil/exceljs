@@ -120,6 +120,10 @@ export class Dom {
     return this.$el.dataset[idName];
   }
 
+  focus() {
+    this.$el.focus();
+  }
+
   get offsetHeight() {
     return this.$el.offsetHeight;
   }
