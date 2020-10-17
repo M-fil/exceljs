@@ -16,6 +16,16 @@ export class Dom {
     return this.$el.outerHTML.trim();
   }
 
+  text(text) {
+    if (typeof text === 'string') {
+      this.$el.textContent = text;
+
+      return this;
+    }
+
+    return null;
+  }
+
   append(node) {
     let nodeCopy = node;
     if (node instanceof Dom) {
@@ -66,6 +76,10 @@ export class Dom {
 
   get dataAttr() {
     return this.$el?.dataset;
+  }
+
+  get content() {
+    return this.$el.textContent;
   }
 
   closest(selector) {
@@ -121,7 +135,9 @@ export class Dom {
   }
 
   focus() {
-    this.$el.focus();
+    if (this.$el) {
+      this.$el.focus();
+    }
   }
 
   get offsetHeight() {

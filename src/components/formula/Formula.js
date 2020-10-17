@@ -9,17 +9,36 @@ class Formula extends ExcelComponent {
   constructor($root, options) {
     super($root, {
       name: 'Formula',
-      listeners: ['click', 'input'],
+      listeners: ['input', 'keydown'],
       ...options,
+    });
+
+    this.onInput = this.onInput.bind(this);
+    this.onKeydown = this.onKeydown.bind(this);
+  }
+
+  init() {
+    super.init();
+    this.input = this.$root.findOne('.input');
+    this.$on('formula:insert-content', (content) => {
+      this.input.text(content);
+    });
+    this.$on('table:cell-input', (content) => {
+      this.input.text(content);
     });
   }
 
-  onClick(event) {
-    console.log('event', event);
+  onInput(event) {
+    const text = event.target.textContent.trim();
+    this.$emit('formula:input', text);
   }
 
-  onInput(event) {
-    console.log(event)
+  onKeydown(event) {
+    const { key } = event;
+    if (key === 'Enter') {
+      event.preventDefault();
+      this.$emit('formula:confirm-text');
+    }
   }
 
   toHTML() {

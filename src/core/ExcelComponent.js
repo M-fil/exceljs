@@ -5,10 +5,31 @@ class ExcelComponent extends DomListener {
     super($root, options.listeners);
 
     this.options = options;
+    this.emitter = this.options.emitter;
+    this.unSubscribers = [];
+
+    this.$emit = this.$emit.bind(this);
+    this.$on = this.$on.bind(this);
+    this.$off = this.$off.bind(this);
   }
 
   toHTML() {
     return '';
+  }
+
+  $emit(eventName, ...args) {
+    this.emitter.emit(eventName, ...args);
+  }
+
+  $on(eventName, fn) {
+    const unSubFunc = this.emitter.subscribe(eventName, fn);
+    this.unSubscribers.push(unSubFunc);
+  }
+
+  $off() {
+    this.unSubscribers.forEach((unSubFunc) => {
+      unSubFunc();
+    });
   }
 
   init() {

@@ -37,7 +37,7 @@ class TableSelection {
   constructor($root) {
     this.$root = $root;
     this.state = {
-      currentSelectedElement: null,
+      current: null,
       selectedElements: [],
     };
 
@@ -56,13 +56,13 @@ class TableSelection {
   }
 
   selectInitialCell() {
-    this.state.currentSelectedElement = this.$root.findOne(
+    this.state.current = this.$root.findOne(
       TableSelection.getSelectedSelector('initial-cell'),
     );
-    const { currentSelectedElement } = this.state;
-    if (currentSelectedElement) {
-      currentSelectedElement.focus();
-      currentSelectedElement.addClasses('selected');
+    const { current } = this.state;
+    if (current) {
+      current.focus();
+      current.addClasses('selected');
     }
   }
 
@@ -74,24 +74,24 @@ class TableSelection {
   }
 
   select(targetElement) {
-    if (this.state.currentSelectedElement) {
+    if (this.state.current) {
       this.removeSingleSelection();
     }
 
     if (targetElement) {
-      this.state.currentSelectedElement = targetElement;
-      const { currentSelectedElement } = this.state;
+      this.state.current = targetElement;
+      const { current } = this.state;
 
-      if (currentSelectedElement) {
-        currentSelectedElement
+      if (current) {
+        current
           .addClasses(TableSelection.getSelectedSelector('one'));
-        currentSelectedElement.focus();
+        current.focus();
       }
     }
   }
 
   selectGroup(targetElement) {
-    const startElementId = this.state.currentSelectedElement.getId(true);
+    const startElementId = this.state.current.getId(true);
     const targetElementId = targetElement.getId(true);
 
     const rows = TableSelection.createRange(
@@ -103,7 +103,7 @@ class TableSelection {
       getSymbolPositionInAlphabet(targetElementId.col),
     );
 
-    const startElementShortId = this.state.currentSelectedElement.getId();
+    const startElementShortId = this.state.current.getId();
     const ids = rows.reduce((acc, curRow) => {
       cols.forEach((col) => acc.push(`${getSymbolByPositionInAlphabet(col)}:${curRow}`));
       return acc;
@@ -128,7 +128,7 @@ class TableSelection {
 
   removeSingleSelection() {
     const selectedClassName = TableSelection.getSelectedSelector('one');
-    this.state.currentSelectedElement.removeClasses(selectedClassName);
+    this.state.current.removeClasses(selectedClassName);
   }
 }
 

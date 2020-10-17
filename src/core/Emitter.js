@@ -4,7 +4,7 @@ class Emitter {
   }
 
   emit(eventName, ...args) {
-    if (Array.isArray(this.listener[eventName])) {
+    if (Array.isArray(this.listeners[eventName])) {
       this.listeners[eventName].forEach((listener) => {
         listener(...args);
       });

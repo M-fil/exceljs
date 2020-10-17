@@ -15,27 +15,34 @@ class Table extends ExcelComponent {
     return 'excel__table';
   }
 
-  constructor($root, options) {
+  constructor($root, optionsObject) {
     super($root, {
       name: 'Table',
       numberOfRows: 20,
-      listeners: ['mousedown', 'keydown'],
-      ...options,
+      listeners: ['mousedown', 'keydown', 'input'],
+      ...optionsObject,
     });
 
     this.targetResizeElement = null;
     this.onMousedown = this.onMousedown.bind(this);
     this.onKeydown = this.onKeydown.bind(this);
+    this.onInput = this.onInput.bind(this);
 
-    this.tableResize = new TableResize(this.$root, this.options.numberOfRows);
-    this.tableSelection = new TableSelection(this.$root, this.keyboardControl);
-    this.keyboardControl = new TableKeyboardControl(this.tableSelection)
+    this.resize = new TableResize(this.$root, this.options.numberOfRows);
+    this.selection = new TableSelection(this.$root, this.keyboardControl);
+    this.keyboardControl = new TableKeyboardControl(this.selection)
       .setNumberOfRows(this.options.numberOfRows);
   }
 
   init() {
     super.init();
-    this.tableSelection.selectInitialCell();
+    this.selection.selectInitialCell();
+    this.$on('formula:input', (content) => {
+      this.selection.state.current.text(content);
+    });
+    this.$on('formula:confirm-text', () => {
+      this.selection.state.current.focus();
+    });
   }
 
   create() {
@@ -97,12 +104,14 @@ class Table extends ExcelComponent {
   onMousedown(event) {
     const resizer = $(event.target);
     const selector = $(event.target);
+    const targetSelector = TableSelection.shouldSelect(selector);
 
-    if (TableSelection.shouldSelect(selector)) {
-      this.tableSelection.selectCells(event, selector);
+    if (targetSelector) {
+      this.$emit('formula:insert-content', targetSelector.content);
+      this.selection.selectCells(event, selector);
     }
     if (TableResize.shouldResize(resizer)) {
-      this.tableResize.activateOnMousedownHandler(resizer);
+      this.resize.activateOnMousedownHandler(resizer);
     }
   }
 
@@ -111,8 +120,17 @@ class Table extends ExcelComponent {
     if (TableKeyboardControl.isAllowToPressKey(event)) {
       event.preventDefault();
 
-      const { currentSelectedElement } = this.tableSelection.state;
-      this.keyboardControl.moveSelectionByArrowClick(key, currentSelectedElement);
+      const { current } = this.selection.state;
+      this.keyboardControl.moveSelectionByArrowClick(key, current);
+    }
+  }
+
+  onInput(event) {
+    const target = $(event.target);
+    const targetCell = TableSelection.shouldSelect(target);
+
+    if (targetCell) {
+      this.$emit('table:cell-input', targetCell.content);
     }
   }
 }

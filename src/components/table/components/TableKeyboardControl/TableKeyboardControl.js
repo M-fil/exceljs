@@ -32,8 +32,8 @@ class TableKeyboardControl {
   }
 
   selectElementByArrowKeyName(arrowKeyName) {
-    const { currentSelectedElement } = this.tableSelection.state;
-    const targetId = currentSelectedElement.getId(true);
+    const { current } = this.tableSelection.state;
+    const targetId = current.getId(true);
     this.tableSelection.removeSingleSelection();
 
     let newColPosition = getSymbolPositionInAlphabet(targetId.col);
@@ -76,9 +76,9 @@ class TableKeyboardControl {
       throw new Error('You need to define \'numberOfRows\' field!');
     }
 
-    const { currentSelectedElement } = this.tableSelection.state;
+    const { current } = this.tableSelection.state;
 
-    if (currentSelectedElement) {
+    if (current) {
       this.tableSelection.removeSelectionGroup();
       this.selectElementByArrowKeyName(keyName);
     }
