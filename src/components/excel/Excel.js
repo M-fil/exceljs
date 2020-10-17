@@ -29,7 +29,6 @@ class Excel {
     this.$rootContainer.append(this.getRoot());
     this.components.forEach((component) => {
       component.init();
-      console.log(component);
     });
   }
 

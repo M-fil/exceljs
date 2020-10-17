@@ -23,6 +23,7 @@ class TableSelection {
 
   static createRange(start, end) {
     if (start > end) {
+      // eslint-disable-next-line no-param-reassign
       [end, start] = [start, end];
     }
     const length = end - start + 1;

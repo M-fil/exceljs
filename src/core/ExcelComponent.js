@@ -13,6 +13,7 @@ class ExcelComponent extends DomListener {
     this.$off = this.$off.bind(this);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   toHTML() {
     return '';
   }

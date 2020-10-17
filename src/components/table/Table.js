@@ -37,11 +37,13 @@ class Table extends ExcelComponent {
   init() {
     super.init();
     this.selection.selectInitialCell();
+    const { current } = this.selection.state;
+    this.$emit('formula:insert-content', current.content);
     this.$on('formula:input', (content) => {
-      this.selection.state.current.text(content);
+      current.text(content);
     });
     this.$on('formula:confirm-text', () => {
-      this.selection.state.current.focus();
+      current.focus();
     });
   }
 
@@ -122,6 +124,7 @@ class Table extends ExcelComponent {
 
       const { current } = this.selection.state;
       this.keyboardControl.moveSelectionByArrowClick(key, current);
+      this.$emit('formula:insert-content', this.selection.state.current.content);
     }
   }
 

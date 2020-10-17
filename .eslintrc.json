@@ -15,6 +15,7 @@
         "linebreak-style": "off",
         "import/no-named-as-default": "off",
         "import/no-unresolved": "off",
-        "no-param-reassign": ["error", { "props": false }]
+        "no-param-reassign": ["error", { "props": false }],
+        "no-use-before-define": "off"
     }
 }

@@ -43,7 +43,11 @@ class Formula extends ExcelComponent {
 
   toHTML() {
     create('div', 'info', 'fx', this.$root.$el);
-    create('div', 'input', '', this.$root.$el, ['contenteditable', ''], ['spellcheck', false]);
+    create(
+      'div', 'input',
+      '', this.$root.$el,
+      ['contenteditable', ''], ['spellcheck', false],
+    );
   }
 }
 export default Formula;
