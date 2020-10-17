@@ -33,3 +33,11 @@ export const getSymbolPositionInAlphabet = (symbol) => englishAlphabetArray
   .findIndex((letter) => letter === symbol) + 1;
 
 export const getSymbolByPositionInAlphabet = (position) => englishAlphabetArray[position - 1];
+
+export const storage = (key, data = null) => {
+  if (!data) {
+    return JSON.parse(localStorage.getItem(key));
+  }
+
+  return localStorage.setItem(key, JSON.stringify(data));
+};

@@ -3,6 +3,7 @@ import create from '@core/create';
 import {
   getEnglishAlphabetArray,
   getArrayOfNumber,
+  storage,
 } from '@core/utils';
 import { $ } from '@core/dom';
 
@@ -38,6 +39,8 @@ class Table extends ExcelComponent {
     this.selection = new TableSelection(this.$root, this.keyboardControl);
     this.keyboardControl = new TableKeyboardControl(this.selection)
       .setNumberOfRows(this.options.numberOfRows);
+
+    this.tableState = storage('excel-state')?.tableState || null;
   }
 
   init() {
@@ -51,10 +54,6 @@ class Table extends ExcelComponent {
     this.$on('formula:confirm-text', () => {
       current.focus();
     });
-
-    this.$subscribe((state) => {
-      console.log('Table', state);
-    });
   }
 
   create() {
@@ -62,15 +61,20 @@ class Table extends ExcelComponent {
     const rows = [null, ...getArrayOfNumber(this.options.numberOfRows)];
 
     rows.forEach((row, rowIndex) => {
+      const rowFromStorage = this.tableState.rows && this.tableState.rows[rowIndex];
       const rowContainer = create(
         'div', 'row',
         '', null,
         row ? ['resizable', '', true] : [],
         ['row', '', true], ['rowIndex', rowIndex, true],
       );
+      if (rowFromStorage) {
+        $(rowContainer).css({ height: `${rowFromStorage.height}px` });
+      }
       const rowData = create('div', 'row-data', '', rowContainer);
 
       this.englishAlphabet.forEach((character, characterIndex) => {
+        const colFromStorage = this.tableState.cols && this.tableState.cols[character];
         const columnResizeElement = create(
           'div', 'col-resize',
           '', null,
@@ -88,13 +92,16 @@ class Table extends ExcelComponent {
             [row ? String(row) : '', row && rowResize], rowData,
           );
         } else if (rowIndex === 0) {
-          create(
+          const columnElement = create(
             'div', 'column',
             [character, columnResizeElement], rowData,
             ['resizable', '', true], ['colName', character, true],
           );
+          if (colFromStorage) {
+            $(columnElement).css({ width: `${colFromStorage.width}px` });
+          }
         } else {
-          create(
+          const cellElement = create(
             'div', 'cell',
             '', rowData,
             ['contenteditable', true], ['parentColName', character, true],
@@ -102,6 +109,9 @@ class Table extends ExcelComponent {
             ['cellId', `${character}:${rowIndex}`, true],
             ['parentRowIndex', rowIndex, true],
           );
+          if (colFromStorage) {
+            $(cellElement).css({ width: `${colFromStorage.width}px` });
+          }
         }
       });
 
@@ -123,7 +133,6 @@ class Table extends ExcelComponent {
         [propToDispatch]: data[propToDispatch],
       },
     });
-    localStorage.setItem('table', JSON.stringify(this.$getState().tableState));
   }
 
   onMousedown(event) {
