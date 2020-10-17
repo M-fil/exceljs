@@ -5,17 +5,21 @@ class Excel {
   constructor(selector, options) {
     this.$rootContainer = document.querySelector(selector);
     this.components = options.components || [];
+
     this.emitter = new Emitter();
+    this.store = options.store;
   }
 
   getRoot() {
     const root = $.create('div', 'excel');
+    const componentOptions = {
+      emitter: this.emitter,
+      store: this.store,
+    };
 
     this.components = this.components.map((Component) => {
       const element = $.create('div', Component.getClassName());
-      const component = new Component(element, {
-        emitter: this.emitter,
-      });
+      const component = new Component(element, componentOptions);
       component.toHTML();
       root.append(element.$el);
 

@@ -79,7 +79,7 @@ export class Dom {
   }
 
   get content() {
-    return this.$el.textContent;
+    return this.$el?.textContent || '';
   }
 
   closest(selector) {

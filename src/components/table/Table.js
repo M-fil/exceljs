@@ -9,6 +9,12 @@ import { $ } from '@core/dom';
 import TableResize from './components/TableResize/TableResize';
 import TableSelection from './components/TableSelection/TableSelection';
 import TableKeyboardControl from './components/TableKeyboardControl/TableKeyboardControl';
+import { tableActionTypes } from '../../redux/actionTypes';
+
+const {
+  SAVE_TABLE_RESIZE_COL_VALUES,
+  SAVE_TABLE_RESIZE_ROW_VALUES,
+} = tableActionTypes;
 
 class Table extends ExcelComponent {
   static getClassName() {
@@ -44,6 +50,10 @@ class Table extends ExcelComponent {
     });
     this.$on('formula:confirm-text', () => {
       current.focus();
+    });
+
+    this.$subscribe((state) => {
+      console.log('Table', state);
     });
   }
 
@@ -103,6 +113,19 @@ class Table extends ExcelComponent {
     this.create();
   }
 
+  async resizeTable(resizer) {
+    const data = await this.resize.activateOnMousedownHandler(resizer);
+    const propToDispatch = data.width ? 'width' : 'height';
+    this.$dispatch({
+      type: data.width ? SAVE_TABLE_RESIZE_COL_VALUES : SAVE_TABLE_RESIZE_ROW_VALUES,
+      payload: {
+        id: data.id,
+        [propToDispatch]: data[propToDispatch],
+      },
+    });
+    localStorage.setItem('table', JSON.stringify(this.$getState().tableState));
+  }
+
   onMousedown(event) {
     const resizer = $(event.target);
     const selector = $(event.target);
@@ -113,7 +136,7 @@ class Table extends ExcelComponent {
       this.selection.selectCells(event, selector);
     }
     if (TableResize.shouldResize(resizer)) {
-      this.resize.activateOnMousedownHandler(resizer);
+      this.resizeTable(resizer);
     }
   }
 

@@ -6,11 +6,14 @@ class ExcelComponent extends DomListener {
 
     this.options = options;
     this.emitter = this.options.emitter;
+    this.store = this.options.store;
     this.unSubscribers = [];
+    this.storeSub = null;
 
     this.$emit = this.$emit.bind(this);
     this.$on = this.$on.bind(this);
     this.$off = this.$off.bind(this);
+    this.$dispatch = this.$dispatch.bind(this);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -33,12 +36,25 @@ class ExcelComponent extends DomListener {
     });
   }
 
+  $dispatch(action) {
+    this.store.dispatch(action);
+  }
+
+  $subscribe(fn) {
+    this.storeSub = this.store.subscribe(fn);
+  }
+
+  $getState() {
+    return this.store.getState();
+  }
+
   init() {
     this.initDOMListener();
   }
 
   destroyEvents() {
     this.removeDOMListener();
+    this.storeSub.unSubscribe();
   }
 }
 
