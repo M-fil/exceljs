@@ -1,6 +1,10 @@
 import ExcelComponent from '@core/ExcelComponent';
 import create from '@core/create';
 
+import {
+  saveTableCellData,
+} from '../../redux/actions';
+
 class Formula extends ExcelComponent {
   static getClassName() {
     return 'excel__formula';
@@ -20,17 +24,19 @@ class Formula extends ExcelComponent {
   init() {
     super.init();
     this.input = this.$root.findOne('.input');
-    this.$on('formula:insert-content', (content) => {
-      this.input.text(content);
-    });
-    this.$on('table:cell-input', (content) => {
-      this.input.text(content);
+    this.$subscribe((state) => {
+      this.cellId = state.tableState.targetCellId;
+      const targetCell = state.tableState.cells[this.cellId] || {};
+
+      this.input.text(targetCell.value || '');
     });
   }
 
   onInput(event) {
     const text = event.target.textContent.trim();
-    this.$emit('formula:input', text);
+    this.$dispatch(saveTableCellData(this.cellId, {
+      value: text,
+    }));
   }
 
   onKeydown(event) {

@@ -6,12 +6,12 @@ import TableResize from './components/TableResize/TableResize';
 import TableSelection from './components/TableSelection/TableSelection';
 import TableKeyboardControl from './components/TableKeyboardControl/TableKeyboardControl';
 import TableCreate from './components/TableCreate/TableCreate';
-import { tableActionTypes } from '../../redux/actionTypes';
 
-const {
-  SAVE_TABLE_RESIZE_COL_VALUES,
-  SAVE_TABLE_RESIZE_ROW_VALUES,
-} = tableActionTypes;
+import {
+  saveTableResize,
+  saveTableCellData,
+  setTargetCellId,
+} from '../../redux/actions';
 
 class Table extends ExcelComponent {
   static getClassName() {
@@ -44,10 +44,10 @@ class Table extends ExcelComponent {
     super.init();
     this.selection.selectInitialCell();
     const { current } = this.selection.state;
-    this.$emit('formula:insert-content', current.content);
-    this.$on('formula:input', (content) => {
-      current.text(content);
-    });
+    const targetCellId = current.getId();
+    this.$dispatch(setTargetCellId(targetCellId, {
+      value: current.content,
+    }));
     this.$on('formula:confirm-text', () => {
       current.focus();
     });
@@ -58,15 +58,9 @@ class Table extends ExcelComponent {
   }
 
   async resizeTable(resizer) {
-    const data = await this.resize.activateOnMousedownHandler(resizer);
-    const propToDispatch = data.width ? 'width' : 'height';
-    this.$dispatch({
-      type: data.width ? SAVE_TABLE_RESIZE_COL_VALUES : SAVE_TABLE_RESIZE_ROW_VALUES,
-      payload: {
-        id: data.id,
-        [propToDispatch]: data[propToDispatch],
-      },
-    });
+    const resizeData = await this.resize.activateOnMousedownHandler(resizer);
+    const propToDispatch = resizeData.width ? 'width' : 'height';
+    this.$dispatch(saveTableResize(resizeData, propToDispatch));
   }
 
   onMousedown(event) {
@@ -75,7 +69,8 @@ class Table extends ExcelComponent {
     const targetSelector = TableSelection.shouldSelect(selector);
 
     if (targetSelector) {
-      this.$emit('formula:insert-content', targetSelector.content);
+      const targetId = targetSelector.getId();
+      this.$dispatch(setTargetCellId(targetId));
       this.selection.selectCells(event, selector);
     }
     if (TableResize.shouldResize(resizer)) {
@@ -90,7 +85,8 @@ class Table extends ExcelComponent {
 
       const { current } = this.selection.state;
       this.keyboardControl.moveSelectionByArrowClick(key, current);
-      this.$emit('formula:insert-content', this.selection.state.current.content);
+      const cellId = this.selection.state.current.getId();
+      this.$dispatch(setTargetCellId(cellId));
     }
   }
 
@@ -99,7 +95,10 @@ class Table extends ExcelComponent {
     const targetCell = TableSelection.shouldSelect(target);
 
     if (targetCell) {
-      this.$emit('table:cell-input', targetCell.content);
+      const cellId = targetCell.getId();
+      this.$dispatch(saveTableCellData(cellId, {
+        value: targetCell.content,
+      }));
     }
   }
 }

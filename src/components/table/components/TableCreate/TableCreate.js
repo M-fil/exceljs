@@ -22,7 +22,10 @@ class TableCreate {
   }
 
   createColumnElement(character, columnResizeElement, rowData) {
-    const colFromStorage = this.tableState.cols && this.tableState.cols[character];
+    let colFromStorage = null;
+    if (this.tableState) {
+      colFromStorage = this.tableState.cols && this.tableState.cols[character];
+    }
 
     const columnElement = create(
       'div', 'column',
@@ -35,11 +38,17 @@ class TableCreate {
   }
 
   createCellElement(character, characterIndex, rowIndex, rowData) {
-    const colFromStorage = this.tableState.cols && this.tableState.cols[character];
+    let colFromStorage = null;
+    let cellContent = '';
+    if (this.tableState) {
+      colFromStorage = this.tableState.cols && this.tableState.cols[character];
+      const cellId = `${character}:${rowIndex}`;
+      cellContent = this.tableState.cells[cellId]?.value || '';
+    }
 
     const cellElement = create(
       'div', 'cell',
-      '', rowData,
+      cellContent, rowData,
       ['contenteditable', true], ['parentColName', character, true],
       ['selectCell', '', true], ['cellIndex', characterIndex, true],
       ['cellId', `${character}:${rowIndex}`, true],
@@ -51,7 +60,10 @@ class TableCreate {
   }
 
   createRowContainer(row, rowIndex) {
-    const rowFromStorage = this.tableState.rows && this.tableState.rows[rowIndex];
+    let rowFromStorage = null;
+    if (this.tableState) {
+      rowFromStorage = this.tableState.rows && this.tableState.rows[rowIndex];
+    }
 
     const rowContainer = create(
       'div', 'row',

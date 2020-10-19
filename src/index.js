@@ -14,13 +14,14 @@ import Header from './components/header/Header';
 const storageData = storage('excel-state');
 const store = createStore(rootReducer, storageData || {
   tableState: {
+    targetCellId: '',
     cols: {},
     rows: {},
+    cells: {},
   },
 });
 
 store.subscribe((state) => {
-  console.log('App state', state);
   storage('excel-state', state);
 });
 
