@@ -9,6 +9,17 @@ class TableSelection {
     return selector.closest('[data-select-cell]');
   }
 
+  static addStylesForCell(cellElement, cellObject) {
+    if (cellElement && cellElement.isElement()) {
+      cellElement.css({
+        'text-align': cellObject.align,
+        'font-weight': cellObject.isBold ? 'bold' : 'initial',
+        'font-style': cellObject.isItalic ? 'italic' : 'initial',
+        'text-decoration': cellObject.isUnderlined ? 'underline' : 'initial',
+      });
+    }
+  }
+
   static getSelectedSelector(type) {
     switch (type) {
       case 'one':

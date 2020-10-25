@@ -34,10 +34,6 @@ class Formula extends ExcelComponent {
     });
   }
 
-  storeChanged(changes) {
-    console.log('changes', changes);
-  }
-
   onInput(event) {
     const { targetCellId, cells } = this.$getState();
 

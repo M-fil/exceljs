@@ -7,8 +7,8 @@ import { toolbarButtonKeys } from '../../constants/toolbar';
 import {
   getTextAlignByKey,
   getPropNameByKey,
-  getKeyByTextAlign,
 } from './helpers/helpers';
+import ToolbarSelection from './components/ToolbarSelection/ToolbarSelection';
 
 const { TEXT, ALIGN } = toolbarButtonKeys;
 
@@ -26,6 +26,7 @@ class Toolbar extends ExcelComponent {
     });
 
     this.onClick = this.onClick.bind(this);
+    this.selection = new ToolbarSelection(this.$root);
   }
 
   createButtonElement(iconName, toolbarButtonType = '', toolbarGroupType = '') {
@@ -42,7 +43,6 @@ class Toolbar extends ExcelComponent {
     if (targetCell[getPropNameByKey(toolbarButtonType)] && !toolbarGroupType) {
       button.addClasses('active');
     }
-
     if (getTextAlignByKey(toolbarButtonType) === targetCell.align) {
       button.addClasses('active');
     }
@@ -52,32 +52,7 @@ class Toolbar extends ExcelComponent {
 
   init() {
     super.init();
-    this.$on('table:cell-selection', (cell) => {
-      const selector = cell && cell.align;
-      const alignButton = this.toolbarButtons.align[selector];
-
-      if (cell) {
-        if (alignButton) {
-          Object.values(this.toolbarButtons.align).forEach((button) => {
-            button.removeClasses('active');
-          });
-          alignButton.addClasses('active');
-        } else {
-          Object.values(this.toolbarButtons.align).forEach((button) => {
-            button.removeClasses('active');
-          });
-        }
-
-        Object.values(this.toolbarButtons.text).forEach((button) => {
-          const toolbarButtonType = button.dataAttr.toolbarButton;
-          if (cell[getPropNameByKey(toolbarButtonType)]) {
-            button.addClasses('active');
-          } else {
-            button.removeClasses('active');
-          }
-        });
-      }
-    });
+    this.$on('table:cell-selection', this.selection.listenTableCellSelection);
   }
 
   toHTML() {
@@ -100,67 +75,17 @@ class Toolbar extends ExcelComponent {
         underlined: this.$root.findOne(`[data-toolbar-button="${TEXT.UNDERLINED}"]`),
       },
     };
+    this.selection.setButtonElements(this.toolbarButtons);
   }
 
   onClick(event) {
     const target = $(event.target).closest('[data-toolbar-button]');
-    let changes = {};
+    const { cells, targetCellId } = this.$getState();
+    const targetCell = cells[targetCellId];
 
-    if (target.isElement()) {
-      const { cells, targetCellId } = this.$getState();
-      const targetCell = cells[targetCellId];
-
-      const buttonType = target.dataAttr.toolbarButton;
-      const groupType = target.dataAttr.toolbarGroup;
-      let textProp = '';
-
-      switch (buttonType) {
-        case ALIGN.LEFT:
-          changes = { align: getTextAlignByKey(ALIGN.LEFT) };
-          break;
-        case ALIGN.RIGHT:
-          changes = { align: getTextAlignByKey(ALIGN.RIGHT) };
-          break;
-        case ALIGN.CENTER:
-          changes = { align: getTextAlignByKey(ALIGN.CENTER) };
-          break;
-        case TEXT.BOLD:
-          changes = { isBold: !(targetCell.isBold) };
-          textProp = 'isBold';
-          break;
-        case TEXT.ITALIC:
-          changes = { isItalic: !(targetCell.isItalic) };
-          textProp = 'isItalic';
-          break;
-        case TEXT.UNDERLINED:
-          changes = { isUnderlined: !(targetCell.isUnderlined) };
-          textProp = 'isUnderlined';
-          break;
-        default:
-          changes = {};
-      }
-
-      if (groupType === 'align') {
-        if (targetCell.align === getTextAlignByKey(buttonType)) {
-          target.removeClasses('active');
-          changes = { align: 'initial' };
-        } else {
-          target.addClasses('active');
-          const selector = targetCell && getKeyByTextAlign(targetCell.align);
-          const previousSelectedAlign = this.$root
-            .findOne(`[data-toolbar-button="${selector}"]`);
-          previousSelectedAlign.removeClasses('active');
-        }
-      } else if (changes[textProp]) {
-        target.addClasses('active');
-      } else {
-        target.removeClasses('active');
-      }
-
-      console.log('changes', changes);
-      this.$emit('toolbar:button-click', changes, targetCell);
-      this.$dispatch(saveTableCellData(targetCellId, changes));
-    }
+    const changes = this.selection.selectToolbarButtons(target, targetCell);
+    this.$emit('toolbar:button-click', changes, targetCell);
+    this.$dispatch(saveTableCellData(targetCellId, changes));
   }
 }
 

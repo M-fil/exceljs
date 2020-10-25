@@ -46,7 +46,7 @@ class Table extends ExcelComponent {
     this.selection.selectInitialCell();
     const { current } = this.selection.state;
     const targetCellId = current.getId();
-    const targetCell = this.tableState.cells[targetCellId];
+    const targetCell = this.tableState && this.tableState.cells[targetCellId];
 
     this.$dispatch(setTargetCellId(targetCellId, {
       value: current.content,
@@ -59,13 +59,7 @@ class Table extends ExcelComponent {
     });
     this.$on('toolbar:button-click', (changes, cell) => {
       const fullDataCell = { ...cell, ...changes };
-      console.log('fullDataCell', fullDataCell);
-      this.selection.state.current.css({
-        'text-align': fullDataCell.align,
-        'font-weight': fullDataCell.isBold ? 'bold' : 'initial',
-        'font-style': fullDataCell.isItalic ? 'italic' : 'initial',
-        'text-decoration': fullDataCell.isUnderlined ? 'underline' : 'initial',
-      });
+      TableSelection.addStylesForCell(this.selection.state.current, fullDataCell);
     });
     this.$emit('table:cell-selection', targetCell);
   }
@@ -85,7 +79,7 @@ class Table extends ExcelComponent {
     const selector = $(event.target);
     const targetSelector = TableSelection.shouldSelect(selector);
 
-    if (targetSelector) {
+    if (targetSelector.isElement()) {
       const { cells } = this.$getState();
       const targetId = targetSelector.getId();
       this.$dispatch(setTargetCellId(targetId));
@@ -116,7 +110,7 @@ class Table extends ExcelComponent {
     const targetCell = TableSelection.shouldSelect(target);
     this.$emit('table:cell-text-input', targetCell.content);
 
-    if (targetCell) {
+    if (targetCell && this.tableState) {
       const cellId = targetCell.getId();
       this.$dispatch(saveTableCellData(cellId, {
         ...this.tableState.cells[cellId],

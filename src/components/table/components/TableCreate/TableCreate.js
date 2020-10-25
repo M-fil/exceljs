@@ -5,6 +5,7 @@ import {
   storage,
 } from '@core/utils';
 import { $ } from '@core/dom';
+import TableSelection from '../TableSelection/TableSelection';
 
 class TableCreate {
   constructor($root, numberOfRows) {
@@ -39,7 +40,7 @@ class TableCreate {
 
   createCellElement(character, characterIndex, rowIndex, rowData) {
     let colFromStorage = null;
-    let cellFromStorage = null;
+    let cellFromStorage = {};
     if (this.tableState) {
       const { cols, cells } = this.tableState;
       const cellId = `${character}:${rowIndex}`;
@@ -48,26 +49,20 @@ class TableCreate {
       cellFromStorage = (cells && cells[cellId]) || {};
     }
 
-    const cellElement = create(
+    const cellElement = $(create(
       'div', 'cell',
       cellFromStorage.value || '', rowData,
       ['contenteditable', true], ['parentColName', character, true],
       ['selectCell', '', true], ['cellIndex', characterIndex, true],
       ['cellId', `${character}:${rowIndex}`, true],
       ['parentRowIndex', rowIndex, true],
-    );
+    ));
     if (colFromStorage) {
-      $(cellElement).css({
+      cellElement.css({
         width: `${colFromStorage.width}px`,
       });
     }
-
-    $(cellElement).css({
-      'text-align': cellFromStorage.align,
-      'font-weight': cellFromStorage.isBold ? 'bold' : 'initial',
-      'font-style': cellFromStorage.isItalic ? 'italic' : 'initial',
-      'text-decoration': cellFromStorage.isUnderlined ? 'underline' : 'initial',
-    });
+    TableSelection.addStylesForCell(cellElement, cellFromStorage);
   }
 
   createRowContainer(row, rowIndex) {

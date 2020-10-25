@@ -1,12 +1,12 @@
 export const toolbarButtonKeys = {
   ALIGN: {
-    LEFT: 'LEFT',
-    RIGHT: 'RIGHT',
-    CENTER: 'CENTER',
+    LEFT: 'left',
+    RIGHT: 'right',
+    CENTER: 'center',
   },
   TEXT: {
-    BOLD: 'BOLD',
-    ITALIC: 'ITALIC',
-    UNDERLINED: 'UNDERLINED',
+    BOLD: 'bold',
+    ITALIC: 'italic',
+    UNDERLINED: 'underline',
   },
 };
