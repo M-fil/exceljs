@@ -17,16 +17,13 @@ class ToolbarSelection {
   listenTableCellSelection(cell) {
     const selector = cell && cell.align;
     const alignButton = this.buttons.align[selector];
+
     if (cell) {
       if (alignButton) {
         Object.values(this.buttons.align).forEach((button) => {
           button.removeClasses('active');
         });
         alignButton.addClasses('active');
-      } else {
-        Object.values(this.buttons.align).forEach((button) => {
-          button.removeClasses('active');
-        });
       }
 
       Object.values(this.buttons.text).forEach((button) => {
@@ -41,6 +38,7 @@ class ToolbarSelection {
       this.$root.findAll('[data-toolbar-button]').forEach((button) => {
         button.removeClasses('active');
       });
+      this.buttons.align.left.addClasses('active');
     }
   }
 
@@ -71,7 +69,7 @@ class ToolbarSelection {
         this.textProp = 'isUnderlined';
         break;
       default:
-        this.changes = {};
+        this.changes = { align: ALIGN.LEFT };
     }
 
     return {
@@ -81,21 +79,13 @@ class ToolbarSelection {
   }
 
   addSelectionClasses(groupType, buttonType, targetCell, target) {
-    if (groupType === 'align') {
-      if (targetCell.align === buttonType) {
-        target.removeClasses('active');
-        this.changes = { align: 'initial' };
-      } else {
-        target.addClasses('active');
-        const selector = targetCell && targetCell.align;
-        const previousSelectedAlign = this.$root
-          .findOne(`[data-toolbar-button="${selector}"]`);
-        previousSelectedAlign.removeClasses('active');
-      }
+    if (groupType === 'align' && targetCell.align !== buttonType) {
+      const selector = targetCell && targetCell.align;
+      const previousSelectedAlign = this.$root.findOne(`[data-toolbar-button="${selector}"]`);
+      previousSelectedAlign.removeClasses('active');
+      target.addClasses('active');
     } else if (this.changes[this.textProp]) {
       target.addClasses('active');
-    } else {
-      target.removeClasses('active');
     }
   }
 
