@@ -98,28 +98,28 @@ class TableResize {
       this.colName = this.parentResizeElement.dataAttr.colName;
       this.targetElementCoords = this.parentResizeElement.getCoords();
       const resizerCoords = resizer.getCoords();
-  
+
       this.allColumnChildren = this.$root
         .findAll(`[data-parent-${this.resizeType}-name="${this.colName}"]`);
       this.targetColumnHead = this.$root
         .findOne(`[data-col-name="${this.colName}"]`);
       this.targetDataResize = this.targetColumnHead
         .findOne('[data-resize]');
-  
+
       document.onmousemove = (e) => {
         resizer.addClasses('visible');
-  
+
         if (this.resizeType === 'col') {
           this.moveResizeColLine(resizer, resizerCoords, e);
         } else {
           this.moveResizeRowLine(resizer, resizerCoords, e);
         }
       };
-  
+
       document.onmouseup = (e) => {
         document.onmousemove = null;
         document.onmouseup = null;
-  
+
         if (this.resizeType === 'col') {
           this.changeColumnSize(resizer, e);
           if (this.parentResizeElement) {

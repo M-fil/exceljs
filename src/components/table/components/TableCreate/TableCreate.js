@@ -39,24 +39,35 @@ class TableCreate {
 
   createCellElement(character, characterIndex, rowIndex, rowData) {
     let colFromStorage = null;
-    let cellContent = '';
+    let cellFromStorage = null;
     if (this.tableState) {
-      colFromStorage = this.tableState.cols && this.tableState.cols[character];
+      const { cols, cells } = this.tableState;
       const cellId = `${character}:${rowIndex}`;
-      cellContent = this.tableState.cells[cellId]?.value || '';
+
+      colFromStorage = cols && cols[character];
+      cellFromStorage = (cells && cells[cellId]) || {};
     }
 
     const cellElement = create(
       'div', 'cell',
-      cellContent, rowData,
+      cellFromStorage.value || '', rowData,
       ['contenteditable', true], ['parentColName', character, true],
       ['selectCell', '', true], ['cellIndex', characterIndex, true],
       ['cellId', `${character}:${rowIndex}`, true],
       ['parentRowIndex', rowIndex, true],
     );
     if (colFromStorage) {
-      $(cellElement).css({ width: `${colFromStorage.width}px` });
+      $(cellElement).css({
+        width: `${colFromStorage.width}px`,
+      });
     }
+
+    $(cellElement).css({
+      'text-align': cellFromStorage.align,
+      'font-weight': cellFromStorage.isBold ? 'bold' : 'initial',
+      'font-style': cellFromStorage.isItalic ? 'italic' : 'initial',
+      'text-decoration': cellFromStorage.isUnderlined ? 'underline' : 'initial',
+    });
   }
 
   createRowContainer(row, rowIndex) {

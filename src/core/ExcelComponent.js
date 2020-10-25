@@ -50,7 +50,7 @@ class ExcelComponent extends DomListener {
   }
 
   storeChanged(changes) {
-    console.log('changes', changes);
+    // console.log('changes', changes);
   }
 
   destroyEvents() {

@@ -14,5 +14,9 @@
 
   .button {
     @include button(green);
+
+    &:not(:last-child) {
+      margin-right: 2px;
+    }
   }
 }

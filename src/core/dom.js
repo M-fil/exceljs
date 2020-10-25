@@ -6,6 +6,10 @@ export class Dom {
     this.listeners = {};
   }
 
+  isElement() {
+    return !!this.$el;
+  }
+
   html(html) {
     if (typeof html === 'string') {
       this.$el.innerHTML = html;

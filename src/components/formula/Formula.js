@@ -29,8 +29,8 @@ class Formula extends ExcelComponent {
     this.$on('table:cell-text-input', (text) => {
       this.input.text(text);
     });
-    this.$on('table:cell-selection', (text) => {
-      this.input.text(text);
+    this.$on('table:cell-selection', (cell) => {
+      this.input.text(cell?.value || '');
     });
   }
 
@@ -39,8 +39,11 @@ class Formula extends ExcelComponent {
   }
 
   onInput(event) {
+    const { targetCellId, cells } = this.$getState();
+
     const text = event.target.textContent.trim();
-    this.$dispatch(saveTableCellData(this.cellId, {
+    this.$dispatch(saveTableCellData(targetCellId, {
+      ...cells[targetCellId],
       value: text,
     }));
     this.$dispatch(setFormulaText(text));

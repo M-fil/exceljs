@@ -46,6 +46,7 @@ class Table extends ExcelComponent {
     this.selection.selectInitialCell();
     const { current } = this.selection.state;
     const targetCellId = current.getId();
+    const targetCell = this.tableState.cells[targetCellId];
 
     this.$dispatch(setTargetCellId(targetCellId, {
       value: current.content,
@@ -56,7 +57,17 @@ class Table extends ExcelComponent {
     this.$on('formula:text-input', (text) => {
       this.selection.state.current.text(text);
     });
-    this.$emit('table:cell-selection', current.content);
+    this.$on('toolbar:button-click', (changes, cell) => {
+      const fullDataCell = { ...cell, ...changes };
+      console.log('fullDataCell', fullDataCell);
+      this.selection.state.current.css({
+        'text-align': fullDataCell.align,
+        'font-weight': fullDataCell.isBold ? 'bold' : 'initial',
+        'font-style': fullDataCell.isItalic ? 'italic' : 'initial',
+        'text-decoration': fullDataCell.isUnderlined ? 'underline' : 'initial',
+      });
+    });
+    this.$emit('table:cell-selection', targetCell);
   }
 
   toHTML() {
@@ -75,10 +86,11 @@ class Table extends ExcelComponent {
     const targetSelector = TableSelection.shouldSelect(selector);
 
     if (targetSelector) {
+      const { cells } = this.$getState();
       const targetId = targetSelector.getId();
       this.$dispatch(setTargetCellId(targetId));
       this.selection.selectCells(event, selector);
-      this.$emit('table:cell-selection', targetSelector.content);
+      this.$emit('table:cell-selection', cells[targetId]);
     }
     if (TableResize.shouldResize(resizer)) {
       this.resizeTable(resizer);
@@ -90,10 +102,12 @@ class Table extends ExcelComponent {
     if (TableKeyboardControl.isAllowToPressKey(event)) {
       event.preventDefault();
 
+      const { cells } = this.$getState();
       const { current } = this.selection.state;
       this.keyboardControl.moveSelectionByArrowClick(key, current);
       const cellId = this.selection.state.current.getId();
       this.$dispatch(setTargetCellId(cellId));
+      this.$emit('table:cell-selection', cells[cellId] || {});
     }
   }
 
@@ -105,6 +119,7 @@ class Table extends ExcelComponent {
     if (targetCell) {
       const cellId = targetCell.getId();
       this.$dispatch(saveTableCellData(cellId, {
+        ...this.tableState.cells[cellId],
         value: targetCell.content,
       }));
     }
