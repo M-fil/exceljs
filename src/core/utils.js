@@ -41,3 +41,11 @@ export const storage = (key, data = null) => {
 
   return localStorage.setItem(key, JSON.stringify(data));
 };
+
+export const isEqual = (a, b) => {
+  if (typeof a === 'object' && typeof b === 'object') {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
+
+  return a === b;
+};

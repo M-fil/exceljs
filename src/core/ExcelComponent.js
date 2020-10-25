@@ -9,6 +9,7 @@ class ExcelComponent extends DomListener {
     this.store = this.options.store;
     this.unSubscribers = [];
     this.storeSub = null;
+    this.subscribe = options.subscribe || [];
 
     this.$emit = this.$emit.bind(this);
     this.$on = this.$on.bind(this);
@@ -40,16 +41,16 @@ class ExcelComponent extends DomListener {
     this.store.dispatch(action);
   }
 
-  $subscribe(fn) {
-    this.storeSub = this.store.subscribe(fn);
-  }
-
   $getState() {
     return this.store.getState();
   }
 
   init() {
     this.initDOMListener();
+  }
+
+  storeChanged(changes) {
+    console.log('changes', changes);
   }
 
   destroyEvents() {

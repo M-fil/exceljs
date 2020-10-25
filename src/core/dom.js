@@ -131,7 +131,7 @@ export class Dom {
       return { col, row };
     }
 
-    return this.$el.dataset[idName];
+    return this.$el?.dataset[idName];
   }
 
   focus() {

@@ -11,7 +11,7 @@ class TableCreate {
     this.$root = $root;
     this.numberOfRows = numberOfRows;
 
-    this.tableState = storage('excel-state')?.tableState || null;
+    this.tableState = storage('excel-state') || null;
   }
 
   createRowInfo(row, rowResize, rowData) {

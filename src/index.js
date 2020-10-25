@@ -13,12 +13,11 @@ import Header from './components/header/Header';
 
 const storageData = storage('excel-state');
 const store = createStore(rootReducer, storageData || {
-  tableState: {
-    targetCellId: '',
-    cols: {},
-    rows: {},
-    cells: {},
-  },
+  targetCellId: '',
+  formulaText: '',
+  cols: {},
+  rows: {},
+  cells: {},
 });
 
 store.subscribe((state) => {
@@ -26,7 +25,7 @@ store.subscribe((state) => {
 });
 
 const excel = new Excel('.root', {
-  components: [Table, Header, Formula, Toolbar],
+  components: [Formula, Table, Header, Toolbar],
   store,
 });
 

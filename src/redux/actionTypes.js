@@ -4,3 +4,7 @@ export const tableActionTypes = {
   SAVE_TABLE_CELL_DATA: 'SAVE_TABLE_CELL_DATA',
   SET_TARGET_CELL_ID: 'SET_TARGET_CELL_ID',
 };
+
+export const formulaActionTypes = {
+  SET_FORMULA_TEXT: 'SET_FORMULA_TEXT',
+};

@@ -23,6 +23,7 @@ class Table extends ExcelComponent {
       name: 'Table',
       numberOfRows: 20,
       listeners: ['mousedown', 'keydown', 'input'],
+      subscribe: ['cols', 'rows', 'targetCellId'],
       ...optionsObject,
     });
 
@@ -37,7 +38,7 @@ class Table extends ExcelComponent {
       .setNumberOfRows(this.options.numberOfRows);
     this.creator = new TableCreate(this.$root, this.options.numberOfRows);
 
-    this.tableState = storage('excel-state')?.tableState || null;
+    this.tableState = storage('excel-state') || null;
   }
 
   init() {
@@ -45,12 +46,17 @@ class Table extends ExcelComponent {
     this.selection.selectInitialCell();
     const { current } = this.selection.state;
     const targetCellId = current.getId();
+
     this.$dispatch(setTargetCellId(targetCellId, {
       value: current.content,
     }));
     this.$on('formula:confirm-text', () => {
       current.focus();
     });
+    this.$on('formula:text-input', (text) => {
+      this.selection.state.current.text(text);
+    });
+    this.$emit('table:cell-selection', current.content);
   }
 
   toHTML() {
@@ -72,6 +78,7 @@ class Table extends ExcelComponent {
       const targetId = targetSelector.getId();
       this.$dispatch(setTargetCellId(targetId));
       this.selection.selectCells(event, selector);
+      this.$emit('table:cell-selection', targetSelector.content);
     }
     if (TableResize.shouldResize(resizer)) {
       this.resizeTable(resizer);
@@ -93,6 +100,7 @@ class Table extends ExcelComponent {
   onInput(event) {
     const target = $(event.target);
     const targetCell = TableSelection.shouldSelect(target);
+    this.$emit('table:cell-text-input', targetCell.content);
 
     if (targetCell) {
       const cellId = targetCell.getId();

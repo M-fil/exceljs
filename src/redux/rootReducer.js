@@ -1,4 +1,7 @@
-import { tableActionTypes } from './actionTypes';
+import {
+  tableActionTypes,
+  formulaActionTypes,
+} from './actionTypes';
 
 const {
   SAVE_TABLE_RESIZE_COL_VALUES,
@@ -7,19 +10,20 @@ const {
   SET_TARGET_CELL_ID,
 } = tableActionTypes;
 
+const {
+  SET_FORMULA_TEXT,
+} = formulaActionTypes;
+
 export const rootReducer = (state, action) => {
   switch (action.type) {
     case SAVE_TABLE_RESIZE_COL_VALUES: {
       return {
         ...state,
-        tableState: {
-          ...state.tableState,
-          cols: {
-            ...state.tableState.cols,
-            [action.payload.id]: {
-              ...state.tableState[action.payload.id],
-              width: action.payload.width,
-            },
+        cols: {
+          ...state.cols,
+          [action.payload.id]: {
+            ...state[action.payload.id],
+            width: action.payload.width,
           },
         },
       };
@@ -27,14 +31,11 @@ export const rootReducer = (state, action) => {
     case SAVE_TABLE_RESIZE_ROW_VALUES: {
       return {
         ...state,
-        tableState: {
-          ...state.tableState,
-          rows: {
-            ...state.tableState.rows,
-            [action.payload.id]: {
-              ...state.tableState[action.payload.id],
-              height: action.payload.height,
-            },
+        rows: {
+          ...state.rows,
+          [action.payload.id]: {
+            ...state[action.payload.id],
+            height: action.payload.height,
           },
         },
       };
@@ -42,24 +43,24 @@ export const rootReducer = (state, action) => {
     case SAVE_TABLE_CELL_DATA:
       return {
         ...state,
-        tableState: {
-          ...state.tableState,
-          cells: {
-            ...state.tableState.cells,
-            [action.payload.cellId]: {
-              ...state.tableState.cells[action.payload.cellId],
-              ...action.payload.cellData,
-            },
+        cells: {
+          ...state.cells,
+          [action.payload.cellId]: {
+            ...state.cells[action.payload.cellId],
+            ...action.payload.cellData,
           },
         },
       };
     case SET_TARGET_CELL_ID:
       return {
         ...state,
-        tableState: {
-          ...state.tableState,
-          targetCellId: action.payload,
-        },
+        targetCellId: action.payload,
+      };
+
+    case SET_FORMULA_TEXT:
+      return {
+        ...state,
+        formulaText: action.payload,
       };
     default:
       return state;

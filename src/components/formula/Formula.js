@@ -3,6 +3,7 @@ import create from '@core/create';
 
 import {
   saveTableCellData,
+  setFormulaText,
 } from '../../redux/actions';
 
 class Formula extends ExcelComponent {
@@ -14,6 +15,7 @@ class Formula extends ExcelComponent {
     super($root, {
       name: 'Formula',
       listeners: ['input', 'keydown'],
+      subscribe: ['targetCell'],
       ...options,
     });
 
@@ -24,12 +26,16 @@ class Formula extends ExcelComponent {
   init() {
     super.init();
     this.input = this.$root.findOne('.input');
-    this.$subscribe((state) => {
-      this.cellId = state.tableState.targetCellId;
-      const targetCell = state.tableState.cells[this.cellId] || {};
-
-      this.input.text(targetCell.value || '');
+    this.$on('table:cell-text-input', (text) => {
+      this.input.text(text);
     });
+    this.$on('table:cell-selection', (text) => {
+      this.input.text(text);
+    });
+  }
+
+  storeChanged(changes) {
+    console.log('changes', changes);
   }
 
   onInput(event) {
@@ -37,6 +43,8 @@ class Formula extends ExcelComponent {
     this.$dispatch(saveTableCellData(this.cellId, {
       value: text,
     }));
+    this.$dispatch(setFormulaText(text));
+    this.$emit('formula:text-input', text);
   }
 
   onKeydown(event) {
