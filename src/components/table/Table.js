@@ -59,12 +59,12 @@ class Table extends ExcelComponent {
     });
     this.$on('toolbar:button-click', (changes, cell) => {
       const fullDataCell = { ...cell, ...changes };
-      const { current: currentElement, selectedElements } = this.selection.state;
+      const { current: currentElement, selectedIds } = this.selection.state;
       TableSelection.addStylesForCell(currentElement, fullDataCell);
 
-      if (selectedElements && selectedElements.length) {
-        selectedElements.forEach((element) => {
-          const id = element.getId();
+      if (selectedIds && selectedIds.length) {
+        selectedIds.forEach((id) => {
+          const element = this.selection.getCellElementById(id);
           const updatedCell = {
             ...fullDataCell,
             value: element.content,

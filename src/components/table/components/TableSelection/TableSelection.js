@@ -50,11 +50,15 @@ class TableSelection {
     this.$root = $root;
     this.state = {
       current: null,
-      selectedElements: [],
+      selectedIds: [],
     };
 
     this.permittedKeys = TableSelection.getPermittedKeyboardKeys();
     this.englishAlphabetLength = getEnglishAlphabetLength();
+  }
+
+  getCellElementById(id) {
+    return this.$root.findOne(`[data-cell-id="${id}"]`);
   }
 
   selectCells(event, selector) {
@@ -64,7 +68,7 @@ class TableSelection {
       this.selectGroup(targetSelector);
     } else {
       this.select(targetSelector);
-      this.state.selectedElements = [];
+      this.state.selectedIds = [];
     }
   }
 
@@ -80,7 +84,8 @@ class TableSelection {
   }
 
   selectByCoords(col, row) {
-    const newSelectedElement = this.$root.findOne(`[data-cell-id="${col}:${row}"]`);
+    const id = `${col}:${row}`;
+    const newSelectedElement = this.getCellElementById(id);
     if (newSelectedElement) {
       this.select(newSelectedElement);
     }
@@ -117,12 +122,12 @@ class TableSelection {
     );
 
     const startElementShortId = this.state.current.getId();
-    const ids = rows.reduce((acc, curRow) => {
+    this.state.selectedIds = rows.reduce((acc, curRow) => {
       cols.forEach((col) => acc.push(`${getSymbolByPositionInAlphabet(col)}:${curRow}`));
       return acc;
     }, []);
-    this.state.selectedElements = ids.map((id) => this.$root.findOne(`[data-cell-id="${id}"]`));
-    this.state.selectedElements.forEach((element) => {
+    this.state.selectedIds.forEach((id) => {
+      const element = this.getCellElementById(id);
       if (element.dataAttr.cellId !== startElementShortId) {
         element.addClasses(TableSelection.getSelectedSelector('group'));
       }
@@ -130,10 +135,11 @@ class TableSelection {
   }
 
   removeSelectionGroup() {
-    const { selectedElements } = this.state;
-    if (selectedElements.length) {
+    const { selectedIds } = this.state;
+    if (selectedIds.length) {
       const groupSelectionClassName = TableSelection.getSelectedSelector('group');
-      selectedElements.forEach((element) => {
+      selectedIds.forEach((id) => {
+        const element = this.getCellElementById(id);
         element.removeClasses(groupSelectionClassName);
       });
     }
