@@ -64,6 +64,7 @@ class TableSelection {
       this.selectGroup(targetSelector);
     } else {
       this.select(targetSelector);
+      this.state.selectedElements = [];
     }
   }
 

@@ -86,6 +86,8 @@ class ToolbarSelection {
       target.addClasses('active');
     } else if (this.changes[this.textProp]) {
       target.addClasses('active');
+    } else if (groupType !== 'align') {
+      target.removeClasses('active');
     }
   }
 

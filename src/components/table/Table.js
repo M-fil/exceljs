@@ -59,7 +59,20 @@ class Table extends ExcelComponent {
     });
     this.$on('toolbar:button-click', (changes, cell) => {
       const fullDataCell = { ...cell, ...changes };
-      TableSelection.addStylesForCell(this.selection.state.current, fullDataCell);
+      const { current: currentElement, selectedElements } = this.selection.state;
+      TableSelection.addStylesForCell(currentElement, fullDataCell);
+
+      if (selectedElements && selectedElements.length) {
+        selectedElements.forEach((element) => {
+          const id = element.getId();
+          const updatedCell = {
+            ...fullDataCell,
+            value: element.content,
+          };
+          this.$dispatch(saveTableCellData(id, updatedCell));
+          TableSelection.addStylesForCell(element, fullDataCell);
+        });
+      }
     });
     this.$emit('table:cell-selection', targetCell);
   }
