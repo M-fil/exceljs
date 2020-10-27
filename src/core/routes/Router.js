@@ -12,8 +12,10 @@ class Router {
     this.changePageHandler = this.changePageHandler.bind(this);
   }
 
-  changePageHandler(event) {
-    console.log(ActiveRoute.path);
+  changePageHandler() {
+    const Page = this.routes.excel;
+    const page = new Page();
+    this.selector.append(page.getRoot());
   }
 
   init() {
