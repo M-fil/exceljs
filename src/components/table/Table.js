@@ -12,7 +12,6 @@ import {
   saveTableResize,
   saveTableCellData,
   setTargetCellId,
-  setFormulaText,
 } from '../../redux/actions';
 
 class Table extends ExcelComponent {
@@ -116,10 +115,9 @@ class Table extends ExcelComponent {
 
       if (Formula.isFormulaText(value)) {
         try {
+          // eslint-disable-next-line no-eval
           result = String(eval(value.slice(1)));
           current.text(String(result));
-          const id = current.getId();
-          this.$dispatch(saveTableCellData(id, { value: result }));
         } catch {
           result = 'Error!';
           current.text(result);
@@ -127,7 +125,9 @@ class Table extends ExcelComponent {
       }
     }
 
+    const id = current.getId();
     this.$emit('table:calculate-value', result);
+    this.$dispatch(saveTableCellData(id, { value: result }));
   }
 
   onKeydown(event) {

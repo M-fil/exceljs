@@ -49,6 +49,7 @@ class Header extends ExcelComponent {
 
       if (tableName.trim() === '') {
         const defaultTableName = Header.getDefaultTableName();
+        // eslint-disable-next-line no-alert
         alert('The table name shouldn\'t be empty!');
         this.$dispatch(changeTableName(defaultTableName));
         target.text(defaultTableName);

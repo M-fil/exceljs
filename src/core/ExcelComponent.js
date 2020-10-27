@@ -49,9 +49,8 @@ class ExcelComponent extends DomListener {
     this.initDOMListener();
   }
 
-  storeChanged(changes) {
-    // console.log('changes', changes);
-  }
+  // eslint-disable-next-line class-methods-use-this
+  storeChanged() {}
 
   destroyEvents() {
     this.removeDOMListener();
