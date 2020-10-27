@@ -1,6 +1,7 @@
 import {
   tableActionTypes,
   formulaActionTypes,
+  headerActionTypes,
 } from './actionTypes';
 
 const {
@@ -9,10 +10,12 @@ const {
   SAVE_TABLE_CELL_DATA,
   SET_TARGET_CELL_ID,
 } = tableActionTypes;
-
 const {
   SET_FORMULA_TEXT,
 } = formulaActionTypes;
+const {
+  CHANGE_TABLE_NAME,
+} = headerActionTypes;
 
 export const rootReducer = (state, action) => {
   switch (action.type) {
@@ -56,11 +59,15 @@ export const rootReducer = (state, action) => {
         ...state,
         targetCellId: action.payload,
       };
-
     case SET_FORMULA_TEXT:
       return {
         ...state,
         formulaText: action.payload,
+      };
+    case CHANGE_TABLE_NAME:
+      return {
+        ...state,
+        tableName: action.payload,
       };
     default:
       return state;

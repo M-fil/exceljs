@@ -49,3 +49,15 @@ export const isEqual = (a, b) => {
 
   return a === b;
 };
+
+export const debounce = (fn, seconds) => {
+  let timeoutFn = null;
+  return (...args) => {
+    const callFn = () => {
+      clearTimeout(timeoutFn);
+      fn.apply(this, args);
+    };
+    clearTimeout(timeoutFn);
+    timeoutFn = setTimeout(callFn, seconds);
+  };
+};

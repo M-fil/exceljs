@@ -1,6 +1,7 @@
 import {
   tableActionTypes,
   formulaActionTypes,
+  headerActionTypes,
 } from './actionTypes';
 
 const {
@@ -9,10 +10,12 @@ const {
   SAVE_TABLE_CELL_DATA,
   SET_TARGET_CELL_ID,
 } = tableActionTypes;
-
 const {
   SET_FORMULA_TEXT,
 } = formulaActionTypes;
+const {
+  CHANGE_TABLE_NAME,
+} = headerActionTypes;
 
 const saveTableResize = (resizeData, propToDispatch) => ({
   type: resizeData.width ? SAVE_TABLE_RESIZE_COL_VALUES : SAVE_TABLE_RESIZE_ROW_VALUES,
@@ -37,10 +40,17 @@ const setFormulaText = (text) => ({
   payload: text,
 });
 
+const changeTableName = (tableName) => ({
+  type: CHANGE_TABLE_NAME,
+  payload: tableName,
+});
+
 export {
   saveTableResize,
   saveTableCellData,
   setTargetCellId,
 
   setFormulaText,
+
+  changeTableName,
 };

@@ -6,11 +6,13 @@ import TableResize from './components/TableResize/TableResize';
 import TableSelection from './components/TableSelection/TableSelection';
 import TableKeyboardControl from './components/TableKeyboardControl/TableKeyboardControl';
 import TableCreate from './components/TableCreate/TableCreate';
+import Formula from '../formula/Formula';
 
 import {
   saveTableResize,
   saveTableCellData,
   setTargetCellId,
+  setFormulaText,
 } from '../../redux/actions';
 
 class Table extends ExcelComponent {
@@ -53,6 +55,7 @@ class Table extends ExcelComponent {
     }));
     this.$on('formula:confirm-text', () => {
       current.focus();
+      this.calculateValueByFormula();
     });
     this.$on('formula:text-input', (text) => {
       this.selection.state.current.text(text);
@@ -104,6 +107,29 @@ class Table extends ExcelComponent {
     }
   }
 
+  calculateValueByFormula() {
+    const { current } = this.selection.state;
+    let result = '';
+
+    if (current && current.isElement()) {
+      const value = current.content;
+
+      if (Formula.isFormulaText(value)) {
+        try {
+          result = String(eval(value.slice(1)));
+          current.text(String(result));
+          const id = current.getId();
+          this.$dispatch(saveTableCellData(id, { value: result }));
+        } catch {
+          result = 'Error!';
+          current.text(result);
+        }
+      }
+    }
+
+    this.$emit('table:calculate-value', result);
+  }
+
   onKeydown(event) {
     const { key } = event;
     if (TableKeyboardControl.isAllowToPressKey(event)) {
@@ -111,7 +137,11 @@ class Table extends ExcelComponent {
 
       const { cells } = this.$getState();
       const { current } = this.selection.state;
+      if (key === 'Enter') {
+        this.calculateValueByFormula();
+      }
       this.keyboardControl.moveSelectionByArrowClick(key, current);
+
       const cellId = this.selection.state.current.getId();
       this.$dispatch(setTargetCellId(cellId));
       this.$emit('table:cell-selection', cells[cellId] || {});

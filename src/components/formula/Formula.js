@@ -11,11 +11,15 @@ class Formula extends ExcelComponent {
     return 'excel__formula';
   }
 
+  static isFormulaText(value) {
+    return value.startsWith('=');
+  }
+
   constructor($root, options) {
     super($root, {
       name: 'Formula',
       listeners: ['input', 'keydown'],
-      subscribe: ['targetCell'],
+      subscribe: ['formulaText'],
       ...options,
     });
 
@@ -28,9 +32,17 @@ class Formula extends ExcelComponent {
     this.input = this.$root.findOne('.input');
     this.$on('table:cell-text-input', (text) => {
       this.input.text(text);
+      this.$dispatch(setFormulaText(text));
     });
     this.$on('table:cell-selection', (cell) => {
-      this.input.text(cell?.value || '');
+      const value = cell?.value || '';
+      this.input.text(value);
+      this.$dispatch(setFormulaText(value));
+    });
+    this.$on('table:calculate-value', (value) => {
+      const result = value || '';
+      this.input.text(result);
+      this.$dispatch(setFormulaText(result));
     });
   }
 

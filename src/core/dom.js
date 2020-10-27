@@ -22,7 +22,11 @@ export class Dom {
 
   text(text) {
     if (typeof text === 'string') {
-      this.$el.textContent = text;
+      if ('value' in this.$el) {
+        this.$el.value = text;
+      } else {
+        this.$el.textContent = text;
+      }
 
       return this;
     }
@@ -83,7 +87,11 @@ export class Dom {
   }
 
   get content() {
-    return this.$el?.textContent || '';
+    if (this.$el) {
+      return this.$el.textContent || this.$el.value || '';
+    }
+
+    return '';
   }
 
   closest(selector) {

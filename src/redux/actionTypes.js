@@ -8,3 +8,7 @@ export const tableActionTypes = {
 export const formulaActionTypes = {
   SET_FORMULA_TEXT: 'SET_FORMULA_TEXT',
 };
+
+export const headerActionTypes = {
+  CHANGE_TABLE_NAME: 'CHANGE_TABLE_NAME',
+};

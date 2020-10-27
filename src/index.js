@@ -2,7 +2,7 @@ import './scss/index.scss';
 import 'material-icons/iconfont/material-icons.scss';
 
 import { createStore } from '@core/createStore';
-import { storage } from '@core/utils';
+import { storage, debounce } from '@core/utils';
 import { rootReducer } from './redux/rootReducer';
 
 import Excel from './components/excel/Excel';
@@ -15,14 +15,16 @@ const storageData = storage('excel-state');
 const store = createStore(rootReducer, storageData || {
   targetCellId: '',
   formulaText: '',
+  tableName: '',
   cols: {},
   rows: {},
   cells: {},
 });
 
-store.subscribe((state) => {
+const storeListener = debounce((state) => {
   storage('excel-state', state);
-});
+}, 300);
+store.subscribe(storeListener);
 
 const excel = new Excel('.root', {
   components: [Formula, Table, Header, Toolbar],
