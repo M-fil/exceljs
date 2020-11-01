@@ -1,5 +1,10 @@
 import ActiveRoute from './ActiveRoute';
 
+const AVAILABLE_PATHS = {
+  EXCEL: 'excel',
+  DASHBOARD: 'dashboard',
+};
+
 class Router {
   constructor(selector, routes) {
     if (!selector) {
@@ -8,14 +13,44 @@ class Router {
 
     this.selector = selector;
     this.routes = routes;
+    this.activeRoute = new ActiveRoute();
+    this.page = null;
 
     this.changePageHandler = this.changePageHandler.bind(this);
   }
 
+  clearRootContent() {
+    this.selector.innerHTML = '';
+  }
+
   changePageHandler() {
-    const Page = this.routes.excel;
-    const page = new Page();
-    this.selector.append(page.getRoot());
+    if (this.page) {
+      this.page.destroy();
+    }
+    this.clearRootContent();
+    const { hash } = this.activeRoute;
+    let pageKey = '';
+
+    switch (hash) {
+      case AVAILABLE_PATHS.EXCEL:
+        pageKey = 'excel';
+        break;
+      case AVAILABLE_PATHS.DASHBOARD:
+        pageKey = 'dashboard';
+        break;
+      default:
+        pageKey = 'error';
+    }
+
+    let Page = this.routes[pageKey];
+    if (!hash || hash === '/') {
+      Page = this.routes.dashboard;
+    }
+
+    this.page = new Page();
+    this.selector.append(this.page.getRoot());
+
+    this.page.afterRender();
   }
 
   init() {
@@ -24,6 +59,7 @@ class Router {
   }
 
   destroy() {
+    this.clearRootContent();
     window.removeEventListener('hashchange', this.changePageHandler);
   }
 }

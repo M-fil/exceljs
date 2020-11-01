@@ -1,11 +1,11 @@
 class ActiveRoute {
   // eslint-disable-next-line class-methods-use-this
-  get path() {
-    return window.location.hash;
+  get hash() {
+    return window.location.hash.replace('#', '');
   }
 
   get params() {
-    return ActiveRoute.path.split('/');
+    return ActiveRoute.hash.split('/');
   }
 }
 

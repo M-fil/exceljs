@@ -33,12 +33,20 @@ class ExcelPage extends Page {
       storage('excel-state', state);
     }, 300);
     store.subscribe(storeListener);
-    this.excel = new Excel('.root', {
+    this.excel = new Excel({
       components: [Formula, Table, Header, Toolbar],
       store,
     });
 
     return this.excel.getRoot();
+  }
+
+  afterRender() {
+    this.excel.init();
+  }
+
+  destroy() {
+    this.excel.destroy();
   }
 }
 

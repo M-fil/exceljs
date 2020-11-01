@@ -6,7 +6,7 @@ class Page {
   getRoot() {
     throw new Error('Method getRoot should be emplemented');
   }
-
+  
   afterRender() {}
 
   destroy() {}

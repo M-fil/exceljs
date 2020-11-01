@@ -29,7 +29,7 @@ class StoreSubscriber {
 
   unSubscribeFromStore() {
     if (this.sub) {
-      this.sub.unsubscribe();
+      this.sub.unSubscribe();
     }
   }
 }

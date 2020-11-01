@@ -54,7 +54,9 @@ class ExcelComponent extends DomListener {
 
   destroyEvents() {
     this.removeDOMListener();
-    this.storeSub.unSubscribe();
+    if (this.storeSub) {
+      this.storeSub.unSubscribe();
+    }
   }
 }
 

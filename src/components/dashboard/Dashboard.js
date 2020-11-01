@@ -11,7 +11,7 @@ class Dashboard {
 
     const dbNewElement = create('div', 'db__new');
     const dbView = create('div', 'db__view', '', dbNewElement);
-    create('a', 'db__create', 'Новая <br /> Таблица', dbView);
+    create('a', 'db__create', 'Новая <br /> Таблица', dbView, ['href', '#excel']);
 
     const dbTable = create('div', 'db__table db__view');
     create('div', 'db__list-header', [
