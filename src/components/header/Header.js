@@ -62,21 +62,22 @@ class Header extends ExcelComponent {
   onClick(event) {
     const target = $(event.target);
 
-    if (target.closest('[data-to-dashboard]')) {
+    if (target.closest('[data-to-dashboard]').isElement()) {
       const { origin } = this.activeRoute;
       const newURL = `${origin}/#dashboard`;
       this.activeRoute.navigate(newURL);
-    }
+    } else if (target.closest('[data-delete-table]').isElement()) {
+      const isConfirmed = confirm('Do you really want to delete this table?');
+      if (isConfirmed) {
+        const { origin } = this.activeRoute;
+        const newURL = `${origin}/#dashboard`;
 
-    if (target.closest('[data-delete-table]')) {
-      const { origin } = this.activeRoute;
-      const newURL = `${origin}/#dashboard`;
+        this.storage = storage('excel-state');
+        delete this.storage[this.tableId];
+        storage('excel-state', this.storage);
 
-      this.storage = storage('excel-state');
-      delete this.storage[this.tableId];
-      storage('excel-state', this.storage);
-
-      this.activeRoute.navigate(newURL);
+        this.activeRoute.navigate(newURL);
+      }
     }
   }
 

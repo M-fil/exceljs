@@ -11,6 +11,7 @@ import {
   saveTableResize,
   saveTableCellData,
   setTargetCellId,
+  changeDate,
 } from '../../redux/actions';
 
 class Table extends ExcelComponent {
@@ -48,6 +49,7 @@ class Table extends ExcelComponent {
     const targetCellId = current.getId();
     const targetCell = this.tableState && this.tableState.cells[targetCellId];
 
+    this.$dispatch(changeDate());
     this.$dispatch(setTargetCellId(targetCellId, {
       value: current.content,
     }));

@@ -15,7 +15,7 @@ class TableRecords {
     const tableHref = TableRecords.getTableHref(tableId);
     const li = create('li', 'db__record');
     create('a', '', tableName, li, ['href', tableHref]);
-    create('strong', '', date && new Date(date).toDateString(), li);
+    create('strong', '', date || '', li);
 
     return li;
   }

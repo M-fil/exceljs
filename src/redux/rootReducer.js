@@ -1,3 +1,4 @@
+import { getCurrentDateAndTime } from '@core/utils';
 import {
   tableActionTypes,
   formulaActionTypes,
@@ -9,6 +10,7 @@ const {
   SAVE_TABLE_RESIZE_ROW_VALUES,
   SAVE_TABLE_CELL_DATA,
   SET_TARGET_CELL_ID,
+  CHANGE_DATE,
 } = tableActionTypes;
 const {
   SET_FORMULA_TEXT,
@@ -68,6 +70,11 @@ export const rootReducer = (state, action) => {
       return {
         ...state,
         tableName: action.payload,
+      };
+    case CHANGE_DATE:
+      return {
+        ...state,
+        date: getCurrentDateAndTime(),
       };
     default:
       return state;

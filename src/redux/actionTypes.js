@@ -3,6 +3,7 @@ export const tableActionTypes = {
   SAVE_TABLE_RESIZE_ROW_VALUES: 'SAVE_TABLE_RESIZE_ROW_VALUES',
   SAVE_TABLE_CELL_DATA: 'SAVE_TABLE_CELL_DATA',
   SET_TARGET_CELL_ID: 'SET_TARGET_CELL_ID',
+  CHANGE_DATE: 'CHANGE_DATE',
 };
 
 export const formulaActionTypes = {

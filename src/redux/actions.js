@@ -9,6 +9,7 @@ const {
   SAVE_TABLE_RESIZE_ROW_VALUES,
   SAVE_TABLE_CELL_DATA,
   SET_TARGET_CELL_ID,
+  CHANGE_DATE,
 } = tableActionTypes;
 const {
   SET_FORMULA_TEXT,
@@ -45,10 +46,13 @@ const changeTableName = (tableName) => ({
   payload: tableName,
 });
 
+const changeDate = () => ({ type: CHANGE_DATE });
+
 export {
   saveTableResize,
   saveTableCellData,
   setTargetCellId,
+  changeDate,
 
   setFormulaText,
 

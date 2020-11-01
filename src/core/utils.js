@@ -61,3 +61,18 @@ export const debounce = (fn, seconds) => {
     timeoutFn = setTimeout(callFn, seconds);
   };
 };
+
+export const getFormattedDate = (date = new Date()) => {
+  const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+
+  return `${day}.${month}.${year}`;
+};
+
+export const getCurrentTime = () => new Date().toLocaleTimeString();
+
+export const getCurrentDateAndTime = () => {
+  const date = getFormattedDate(new Date());
+  return `${date} ${getCurrentTime()}`;
+};

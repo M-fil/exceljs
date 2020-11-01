@@ -1,6 +1,8 @@
 import Page from '@core/Page';
 import { createStore } from '@core/createStore';
-import { storage, debounce } from '@core/utils';
+import {
+  storage, debounce, getCurrentDateAndTime,
+} from '@core/utils';
 
 import Excel from '../components/excel/Excel';
 import Table from '../components/table/Table';
@@ -29,7 +31,9 @@ class ExcelPage extends Page {
 
   getRoot() {
     const storageData = storage('excel-state');
-    const tableState = (storageData && storageData[this.tableId]) || getInitialState();
+    const date = getCurrentDateAndTime();
+    const tableState = (storageData && storageData[this.tableId])
+      || getInitialState(date);
     storage('excel-state', {
       ...(storageData || {}),
       [this.tableId]: tableState,
