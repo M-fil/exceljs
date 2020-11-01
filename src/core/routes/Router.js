@@ -46,8 +46,12 @@ class Router {
     if (!hash || hash === '/') {
       Page = this.routes.dashboard;
     }
+    if (hash.includes('excel')) {
+      Page = this.routes.excel;
+    }
 
-    this.page = new Page();
+    const tableId = this.activeRoute.getParams(hash)[1] || Date.now();
+    this.page = new Page(tableId);
     this.selector.append(this.page.getRoot());
 
     this.page.afterRender();

@@ -31,7 +31,7 @@ class Toolbar extends ExcelComponent {
 
   createButtonElement(iconName, toolbarButtonType = '', toolbarGroupType = '') {
     const { cells, targetCellId } = this.$getState();
-    const targetCell = cells[targetCellId] || {};
+    const targetCell = (cells && cells[targetCellId]) || {};
 
     const icon = create('i', 'material-icons', iconName);
     const button = $(create(

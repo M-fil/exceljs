@@ -2,7 +2,6 @@ import create from '@core/create';
 import {
   getEnglishAlphabetArray,
   getArrayOfNumber,
-  storage,
 } from '@core/utils';
 import { $ } from '@core/dom';
 import TableSelection from '../TableSelection/TableSelection';
@@ -11,8 +10,12 @@ class TableCreate {
   constructor($root, numberOfRows) {
     this.$root = $root;
     this.numberOfRows = numberOfRows;
+  }
 
-    this.tableState = storage('excel-state') || null;
+  setState(state) {
+    this.tableState = state;
+
+    return this;
   }
 
   createRowInfo(row, rowResize, rowData) {

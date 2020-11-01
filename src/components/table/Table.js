@@ -1,5 +1,4 @@
 import ExcelComponent from '@core/ExcelComponent';
-import { storage } from '@core/utils';
 import { $ } from '@core/dom';
 
 import TableResize from './components/TableResize/TableResize';
@@ -27,6 +26,7 @@ class Table extends ExcelComponent {
       subscribe: ['cols', 'rows', 'targetCellId'],
       ...optionsObject,
     });
+    this.tableState = this.$getState();
 
     this.targetResizeElement = null;
     this.onMousedown = this.onMousedown.bind(this);
@@ -37,9 +37,8 @@ class Table extends ExcelComponent {
     this.selection = new TableSelection(this.$root, this.keyboardControl);
     this.keyboardControl = new TableKeyboardControl(this.selection)
       .setNumberOfRows(this.options.numberOfRows);
-    this.creator = new TableCreate(this.$root, this.options.numberOfRows);
-
-    this.tableState = storage('excel-state') || null;
+    this.creator = new TableCreate(this.$root, this.options.numberOfRows)
+      .setState(this.tableState);
   }
 
   init() {

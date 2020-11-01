@@ -4,8 +4,8 @@ class ActiveRoute {
     return window.location.hash.replace('#', '');
   }
 
-  get params() {
-    return ActiveRoute.hash.split('/');
+  getParams(hash) {
+    return hash ? hash.split('/') : {};
   }
 }
 

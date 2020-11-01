@@ -13,24 +13,37 @@ import { rootReducer } from '../redux/rootReducer';
 const INITIAL_STATE = {
   targetCellId: '',
   formulaText: '',
-  tableName: '',
+  tableName: 'New Table',
+  date: null,
   cols: {},
   rows: {},
   cells: {},
 };
 
 class ExcelPage extends Page {
-  constructor() {
+  constructor(tableId) {
     super();
+    this.tableId = tableId;
     this.excel = null;
   }
 
   getRoot() {
     const storageData = storage('excel-state');
-    const store = createStore(rootReducer, storageData || INITIAL_STATE);
+    const tableState = (storageData && storageData[this.tableId]) || INITIAL_STATE;
+    storage('excel-state', {
+      ...(storageData || {}),
+      [this.tableId]: {
+        date: new Date(),
+        ...tableState,
+      },
+    });
+    const store = createStore(rootReducer, tableState);
 
     const storeListener = debounce((state) => {
-      storage('excel-state', state);
+      storage('excel-state', {
+        ...(storageData || {}),
+        [this.tableId]: state,
+      });
     }, 300);
     store.subscribe(storeListener);
     this.excel = new Excel({

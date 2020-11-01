@@ -2,9 +2,9 @@ import Page from '@core/Page';
 import Dashboard from '../components/dashboard/Dashboard';
 
 class DashboardPage extends Page {
-  constructor() {
+  constructor(tableId) {
     super();
-    this.dashboard = new Dashboard();
+    this.dashboard = new Dashboard(tableId);
   }
 
   getRoot() {
