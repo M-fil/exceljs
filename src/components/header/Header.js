@@ -1,6 +1,8 @@
 import ExcelComponent from '@core/ExcelComponent';
 import create from '@core/create';
 import { $ } from '@core/dom';
+import { storage } from '@core/utils';
+import ActiveRoute from '@core/routes/ActiveRoute';
 
 import { changeTableName } from '../../redux/actions';
 
@@ -20,12 +22,17 @@ class Header extends ExcelComponent {
   constructor($root, options) {
     super($root, {
       name: 'Header',
-      listeners: ['change'],
+      listeners: ['change', 'click'],
       subscribe: ['tableName'],
       ...options,
     });
+    this.activeRoute = new ActiveRoute();
 
     this.onChange = this.onChange.bind(this);
+    this.onClick = this.onClick.bind(this);
+
+    const { hash } = this.activeRoute;
+    this.tableId = this.activeRoute.getId(hash);
   }
 
   toHTML() {
@@ -36,10 +43,41 @@ class Header extends ExcelComponent {
       ['type', 'text'], ['value', state.tableName], ['tableName', '', true],
     );
     const divContainer = document.createElement('div');
-    create('div', 'button', create('i', 'material-icons', 'delete'), divContainer);
-    create('div', 'button', create('i', 'material-icons', 'exit_to_app'), divContainer);
+    create(
+      'div', 'button',
+      create('i', 'material-icons', 'delete'),
+      divContainer,
+      ['deleteTable', '', true],
+    );
+    create(
+      'div', 'button',
+      create('i', 'material-icons', 'exit_to_app'),
+      divContainer,
+      ['toDashboard', '', true],
+    );
     this.$root.append(input);
     this.$root.append(divContainer);
+  }
+
+  onClick(event) {
+    const target = $(event.target);
+
+    if (target.closest('[data-to-dashboard]')) {
+      const { origin } = this.activeRoute;
+      const newURL = `${origin}/#dashboard`;
+      this.activeRoute.navigate(newURL);
+    }
+
+    if (target.closest('[data-delete-table]')) {
+      const { origin } = this.activeRoute;
+      const newURL = `${origin}/#dashboard`;
+
+      this.storage = storage('excel-state');
+      delete this.storage[this.tableId];
+      storage('excel-state', this.storage);
+
+      this.activeRoute.navigate(newURL);
+    }
   }
 
   onChange(event) {

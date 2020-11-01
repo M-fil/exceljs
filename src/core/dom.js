@@ -94,6 +94,10 @@ export class Dom {
     return '';
   }
 
+  isAttrExists(attr) {
+    return this.$el.hasAttribute(attr);
+  }
+
   closest(selector) {
     return $(this.$el.closest(selector));
   }

@@ -10,15 +10,15 @@ import Header from '../components/header/Header';
 
 import { rootReducer } from '../redux/rootReducer';
 
-const INITIAL_STATE = {
+const getInitialState = (date = new Date()) => ({
   targetCellId: '',
   formulaText: '',
   tableName: 'New Table',
-  date: null,
+  date,
   cols: {},
   rows: {},
   cells: {},
-};
+});
 
 class ExcelPage extends Page {
   constructor(tableId) {
@@ -29,13 +29,10 @@ class ExcelPage extends Page {
 
   getRoot() {
     const storageData = storage('excel-state');
-    const tableState = (storageData && storageData[this.tableId]) || INITIAL_STATE;
+    const tableState = (storageData && storageData[this.tableId]) || getInitialState();
     storage('excel-state', {
       ...(storageData || {}),
-      [this.tableId]: {
-        date: new Date(),
-        ...tableState,
-      },
+      [this.tableId]: tableState,
     });
     const store = createStore(rootReducer, tableState);
 
