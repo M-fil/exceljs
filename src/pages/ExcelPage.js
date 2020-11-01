@@ -1,5 +1,5 @@
 import Page from '@core/Page';
-import { createStore } from '@core/createStore';
+import { createStore } from '@core/store/createStore';
 import {
   storage, debounce, getCurrentDateAndTime,
 } from '@core/utils';
