@@ -6,6 +6,10 @@ class StateProcessor {
     this.listen = debounce(this.listen.bind(this), delay);
   }
 
+  getClient() {
+    return this.client;
+  }
+
   listen(state) {
     this.client.save(state);
   }

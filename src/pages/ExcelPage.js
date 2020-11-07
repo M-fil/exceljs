@@ -1,8 +1,5 @@
 import Page from '@core/Page';
 import { createStore } from '@core/store/createStore';
-import {
-  storage, debounce, getCurrentDateAndTime,
-} from '@core/utils';
 import Loader from '../components/loader/Loader';
 import StateProcessor from '@core/db/StateProcessor';
 import LocalStorageClient from '@core/db/clients/LocalStorageClient';
@@ -14,16 +11,6 @@ import Formula from '../components/formula/Formula';
 import Header from '../components/header/Header';
 
 import { rootReducer } from '../redux/rootReducer';
-
-const getInitialState = (date = new Date()) => ({
-  targetCellId: '',
-  formulaText: '',
-  tableName: 'New Table',
-  date,
-  cols: {},
-  rows: {},
-  cells: {},
-});
 
 class ExcelPage extends Page {
   constructor(tableId) {
@@ -40,13 +27,12 @@ class ExcelPage extends Page {
   async getRoot() {
     this.loader.show();
     const storageData = await this.processor.get();
-    const date = getCurrentDateAndTime();
-    const tableState = (storageData && storageData[this.tableId])
-      || getInitialState(date);
-    storage('excel-state', {
-      ...(storageData || {}),
-      [this.tableId]: tableState,
-    });
+    const client = this.processor.getClient();
+    const tableState = client.saveInitialStorageData(this.tableId, storageData);
+    // storage('excel-state', {
+    //   ...(storageData || {}),
+    //   [this.tableId]: tableState,
+    // });
     const store = createStore(rootReducer, tableState);
     this.subStore = store.subscribe(this.processor.listen);
     this.excel = new Excel({

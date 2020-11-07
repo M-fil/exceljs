@@ -47,7 +47,8 @@ class Table extends ExcelComponent {
     this.selection.selectInitialCell();
     const { current } = this.selection.state;
     const targetCellId = current.getId();
-    const targetCell = this.tableState && this.tableState.cells[targetCellId];
+    const targetCell = (this.tableState && this.tableState.cells)
+      && this.tableState.cells[targetCellId];
 
     this.$dispatch(changeDate());
     this.$dispatch(setTargetCellId(targetCellId, {

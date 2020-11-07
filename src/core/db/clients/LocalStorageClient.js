@@ -1,5 +1,8 @@
-import AbstractClient from './AbstractClient';
 import { storage } from '@core/utils';
+import { getCurrentDateAndTime } from '@core/utils';
+
+import AbstractClient from './AbstractClient';
+import { getInitialState } from '../../../redux/initialState';
 
 class LocalStorageClient extends AbstractClient {
   constructor(name) {
@@ -8,11 +11,31 @@ class LocalStorageClient extends AbstractClient {
     this.name = name;
   }
 
-  save(state) {
+  saveInitialStorageData(tableId, storageData) {
+    const date = getCurrentDateAndTime();
+    const tableState = storageData
+      ? storageData[tableId]
+      : getInitialState(date);
+
     storage(this.name, {
       ...(storageData || {}),
-      [this.tableId]: state,
+      [tableId]: tableState,
     });
+
+    this.stateData = {
+      storageData, tableId,
+    }
+
+    return tableState;
+  }
+
+  save(state) {
+    const { storageData, tableId } = this.stateData;
+    storage(this.name, {
+      ...(storageData || {}),
+      [tableId]: state,
+    });
+    return Promise.resolve();
   }
 
   get() {
