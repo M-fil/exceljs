@@ -23,7 +23,7 @@ class Router {
     this.selector.innerHTML = '';
   }
 
-  changePageHandler() {
+  async changePageHandler() {
     if (this.page) {
       this.page.destroy();
     }
@@ -52,7 +52,8 @@ class Router {
 
     const tableId = this.activeRoute.getParams(hash)[1] || Date.now();
     this.page = new Page(tableId);
-    this.selector.append(this.page.getRoot());
+    const root = await this.page.getRoot();
+    this.selector.append(root);
 
     this.page.afterRender();
   }

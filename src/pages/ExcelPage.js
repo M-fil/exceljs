@@ -3,6 +3,9 @@ import { createStore } from '@core/store/createStore';
 import {
   storage, debounce, getCurrentDateAndTime,
 } from '@core/utils';
+import Loader from '../components/loader/Loader';
+import StateProcessor from '@core/db/StateProcessor';
+import LocalStorageClient from '@core/db/clients/LocalStorageClient';
 
 import Excel from '../components/excel/Excel';
 import Table from '../components/table/Table';
@@ -27,10 +30,16 @@ class ExcelPage extends Page {
     super();
     this.tableId = tableId;
     this.excel = null;
+
+    this.storeSub = null;
+    const localStorageClient = new LocalStorageClient('excel-state');
+    this.processor = new StateProcessor(localStorageClient);
+    this.loader = new Loader();
   }
 
-  getRoot() {
-    const storageData = storage('excel-state');
+  async getRoot() {
+    this.loader.show();
+    const storageData = await this.processor.get();
     const date = getCurrentDateAndTime();
     const tableState = (storageData && storageData[this.tableId])
       || getInitialState(date);
@@ -39,14 +48,7 @@ class ExcelPage extends Page {
       [this.tableId]: tableState,
     });
     const store = createStore(rootReducer, tableState);
-
-    const storeListener = debounce((state) => {
-      storage('excel-state', {
-        ...(storageData || {}),
-        [this.tableId]: state,
-      });
-    }, 300);
-    store.subscribe(storeListener);
+    this.subStore = store.subscribe(this.processor.listen);
     this.excel = new Excel({
       components: [Formula, Table, Header, Toolbar],
       store,
@@ -56,11 +58,15 @@ class ExcelPage extends Page {
   }
 
   afterRender() {
+    this.loader.hide();
     this.excel.init();
   }
 
   destroy() {
     this.excel.destroy();
+    if (this.storeSub) {
+      this.storeSub.unSubscribe();
+    }
   }
 }
 

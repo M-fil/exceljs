@@ -75,7 +75,7 @@ export class Dom {
   }
 
   findOne(selector) {
-    return $(this.$el?.querySelector(selector));
+    return this.$el && $(this.$el.querySelector(selector));
   }
 
   getCoords() {
@@ -83,7 +83,7 @@ export class Dom {
   }
 
   get dataAttr() {
-    return this.$el?.dataset;
+    return this.$el && this.$el.dataset;
   }
 
   get content() {
@@ -103,7 +103,7 @@ export class Dom {
   }
 
   hasClass(className) {
-    return this.$el?.classList.contains(className);
+    return this.$el && this.$el.classList.contains(className);
   }
 
   addClasses(...classes) {
@@ -125,7 +125,7 @@ export class Dom {
   }
 
   isHTMLLinkEquals(htmlElement) {
-    return this.$el === htmlElement || this.$el === htmlElement?.$el;
+    return this.$el === htmlElement || this.$el === (htmlElement && htmlElement.$el);
   }
 
   css(styles = {}) {
@@ -147,7 +147,7 @@ export class Dom {
       return { col, row };
     }
 
-    return this.$el?.dataset[idName];
+    return this.$el && this.$el.dataset[idName];
   }
 
   focus() {

@@ -35,7 +35,7 @@ class Formula extends ExcelComponent {
       this.$dispatch(setFormulaText(text));
     });
     this.$on('table:cell-selection', (cell) => {
-      const value = cell?.value || '';
+      const value = cell ? cell.value : '';
       this.input.text(value);
       this.$dispatch(setFormulaText(value));
     });
